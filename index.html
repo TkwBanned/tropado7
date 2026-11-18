@@ -845,42 +845,166 @@
       color: var(--text-sec);
     }
 
+    /* ===== A TROPA ===== */
+    .tropa__visual {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 28px;
+    }
+
+    .tropa__ring {
+      position: relative;
+      width: 168px;
+      height: 168px;
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .tropa__ring::before {
+      content: '';
+      position: absolute;
+      inset: -18px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(225, 6, 0, 0.45) 0%, rgba(225, 6, 0, 0) 70%);
+      filter: blur(12px);
+      z-index: 0;
+    }
+
+    .tropa__ring::after {
+      content: '';
+      position: absolute;
+      inset: -9px;
+      border-radius: 50%;
+      border: 1px dashed rgba(225, 6, 0, 0.45);
+      animation: tropaSpin 22s linear infinite;
+      z-index: 0;
+    }
+
+    @keyframes tropaSpin {
+      to { transform: rotate(360deg); }
+    }
+
     .tropa__image {
-      display: block;
+      position: relative;
+      z-index: 1;
       width: 100%;
-      max-width: 280px;
-      margin: 0 auto 12px;
-      aspect-ratio: 1 / 1;
-      object-fit: contain;
-      border-radius: 2px;
-      border: 1px solid var(--hairline);
-      outline: 1px solid var(--hairline);
-      outline-offset: 6px;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      border-radius: 50%;
+      border: 3px solid var(--red);
       background-color: var(--surface);
-      padding: 12px;
+      box-shadow:
+        0 0 0 6px rgba(225, 6, 0, 0.10),
+        0 16px 36px rgba(0, 0, 0, 0.6);
     }
 
     .tropa__caption {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
       font-family: var(--font-mono);
       font-size: 10px;
       letter-spacing: 0.12em;
       text-transform: uppercase;
       color: var(--text-sec);
-      text-align: center;
-      margin-bottom: 24px;
+      background-color: var(--surface);
+      border: 1px solid var(--hairline);
+      border-radius: 999px;
+      padding: 7px 14px;
+    }
+
+    .tropa__caption::before {
+      content: '';
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background-color: var(--red-cta);
+      flex-shrink: 0;
+    }
+
+    .tropa__kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--red-text);
+      margin-bottom: 12px;
+    }
+
+    .tropa__kicker::before {
+      content: '';
+      width: 14px;
+      height: 2px;
+      background-color: var(--red);
+      flex-shrink: 0;
     }
 
     .tropa__text {
       color: var(--text-sec);
       font-size: 15px;
       line-height: 1.7;
-      margin-bottom: 24px;
+      margin-bottom: 22px;
       max-width: 600px;
     }
 
     .tropa__text strong {
       color: var(--text);
       font-weight: 600;
+    }
+
+    .tropa__btn {
+      position: relative;
+      overflow: hidden;
+      min-height: 56px;
+      font-size: 13px;
+      border-radius: 10px;
+      background-color: var(--red-cta);
+      background-image: linear-gradient(135deg, #FF4B41 0%, #E10600 55%, #C00500 100%);
+      color: #fff;
+      box-shadow:
+        0 12px 28px rgba(225, 6, 0, 0.38),
+        inset 0 1px 0 rgba(255, 255, 255, 0.28);
+    }
+
+    .tropa__btn::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: -60%;
+      width: 40%;
+      background: linear-gradient(100deg, transparent, rgba(255,255,255,0.35), transparent);
+      transform: skewX(-18deg);
+      animation: tropaShine 4.5s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    @keyframes tropaShine {
+      0%, 55% { left: -60%; }
+      85%, 100% { left: 130%; }
+    }
+
+    .tropa__btn .btn__arrow {
+      width: 18px;
+      height: 18px;
+    }
+
+    .tropa__microcopy {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-sec);
+      display: block;
+      margin-top: 10px;
+      text-align: center;
     }
 
     .marquee {
@@ -1477,20 +1601,28 @@
       }
       .tropa__layout {
         display: grid;
-        grid-template-columns: 320px 1fr;
-        gap: 48px;
-        align-items: start;
+        grid-template-columns: 220px 1fr;
+        gap: 40px;
+        align-items: center;
       }
-      .tropa__image {
-        max-width: 320px;
-        margin: 0;
-        padding: 0;
+      .tropa__visual {
+        align-items: flex-start;
+        margin-bottom: 0;
       }
-      .tropa__caption {
-        text-align: left;
+      .tropa__ring {
+        width: 196px;
+        height: 196px;
+        margin-bottom: 16px;
       }
       .tropa__content {
-        padding-top: 16px;
+        padding-top: 0;
+      }
+      .tropa__btn {
+        max-width: 380px;
+      }
+      .tropa__microcopy {
+        text-align: left;
+        max-width: 380px;
       }
       .menu-overlay {
         padding: 120px 64px 48px;
@@ -1535,6 +1667,15 @@
       .founder__avatar img {
         width: 72px;
         height: 72px;
+      }
+      .tropa__ring {
+        width: 148px;
+        height: 148px;
+      }
+      .tropa__btn {
+        font-size: 11px;
+        letter-spacing: 0.08em;
+        padding: 0 16px;
       }
     }
 
@@ -1778,19 +1919,23 @@
           <h2 class="section__title">A TROPA</h2>
         </div>
         <div class="tropa__layout">
-          <div>
-            <img src="https://i.imgur.com/Lp1Ks7c.jpeg" alt="Tropa do 7 — Equipe 5:30" class="tropa__image reveal" loading="lazy" decoding="async" width="320" height="320">
+          <div class="tropa__visual">
+            <div class="tropa__ring">
+              <img src="https://i.imgur.com/Lp1Ks7c.jpeg" alt="Tropa do 7 — Equipe 5:30" class="tropa__image reveal" loading="lazy" decoding="async" width="320" height="320">
+            </div>
             <p class="tropa__caption reveal">GRUPO OFICIAL · EQUIPE 5:30</p>
           </div>
           <div class="tropa__content">
-            <p class="tropa__text reveal">Grupo de WhatsApp gratuito fundado por <strong>Sariel OzN</strong>. Aqui rola material de burlando, ferramenta de carding, checkout, base de cartão e tudo que a tropa precisa pra correr atrás. <strong>Equipe 5:30</strong> é o nome da equipe — não é horário. É o bonde que anda junto. Sem enrolação, sem grupo de link, sem venda de curso. Só o corre.</p>
+            <span class="tropa__kicker reveal">ONDE A TROPA FAZ DINHEIRO</span>
+            <p class="tropa__text reveal">Grupo de WhatsApp gratuito fundado por <strong>Sariel OzN</strong>. É aqui que a tropa aprende a <strong>fazer dinheiro com burlando</strong>: do primeiro cadastro ao primeiro saque caindo na conta. Base de cartão, checkout, banco e ferramenta na mão — sem curso pago, sem enrolação. <strong>Equipe 5:30</strong> é o nome da equipe, não é horário: é o bonde que corre junto e não deixa ninguém pra trás.</p>
             <div class="reveal">
-              <a href="https://chat.whatsapp.com/GMDcw0hgdU51aQekEuZNX1" target="_blank" rel="noopener" class="btn btn--block">
-                ENTRAR NO GRUPO
+              <a href="https://chat.whatsapp.com/GMDcw0hgdU51aQekEuZNX1" target="_blank" rel="noopener" class="btn btn--block tropa__btn">
+                ENTRAR NO GRUPO E COMEÇAR
                 <svg class="btn__arrow" viewBox="0 0 16 16" fill="none" aria-hidden="true">
                   <path d="M2 8H13M9 4L13 8L9 12" stroke="currentColor" stroke-width="1.5"/>
                 </svg>
               </a>
+              <span class="tropa__microcopy">GRÁTIS · ACESSO IMEDIATO</span>
             </div>
           </div>
         </div>
