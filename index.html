@@ -81,6 +81,7 @@
       { "@type": "SiteNavigationElement", "name": "Regras", "url": "https://tropado7.com.br/#regras" },
       { "@type": "SiteNavigationElement", "name": "Glossário", "url": "https://tropado7.com.br/#glossario" },
       { "@type": "SiteNavigationElement", "name": "Perguntas", "url": "https://tropado7.com.br/#perguntas" },
+      { "@type": "SiteNavigationElement", "name": "Bancos falsos", "url": "https://tropado7.com.br/pixfalso.html" },
       {
         "@type": "FAQPage",
         "mainEntity": [
@@ -424,6 +425,26 @@
       min-height: 56px;
       border-bottom: 1px solid var(--hairline);
       cursor: default;
+    }
+
+    /* ===== ITEM DE MENU CLICÁVEL ===== */
+    a.menu-overlay__item {
+      cursor: pointer;
+      padding-left: 10px;
+      padding-right: 10px;
+      margin-left: -10px;
+      margin-right: -10px;
+      border-radius: var(--radius);
+      transition: background-color 0.3s var(--transition), border-color 0.3s var(--transition);
+    }
+
+    a.menu-overlay__item .menu-overlay__title {
+      transition: color 0.3s var(--transition), opacity 0.3s var(--transition);
+    }
+
+    a.menu-overlay__item.is-active {
+      background-color: var(--surface);
+      border-bottom-color: var(--red);
     }
 
     .menu-overlay__num {
@@ -1077,6 +1098,21 @@
       pointer-events: none;
     }
 
+    /* ===== CARD CLICÁVEL ===== */
+    a.tool-card {
+      cursor: pointer;
+      transition: border-color 0.3s var(--transition), transform 0.4s var(--transition);
+    }
+
+    a.tool-card .tool-card__title,
+    a.tool-card .tool-card__footer {
+      transition: color 0.3s var(--transition);
+    }
+
+    a.tool-card .tool-card__footer {
+      color: var(--red-text);
+    }
+
     .tool-card__icon {
       position: absolute;
       top: 14px;
@@ -1697,6 +1733,22 @@
       .hero__breadcrumb a:hover {
         color: var(--text);
       }
+      a.menu-overlay__item:hover {
+        background-color: var(--surface);
+        border-bottom-color: var(--red);
+      }
+      a.menu-overlay__item:hover .menu-overlay__title {
+        opacity: 1;
+        color: var(--red-text);
+      }
+      a.tool-card:hover {
+        border-color: var(--red);
+        transform: translateY(-4px);
+      }
+      a.tool-card:hover .tool-card__title {
+        color: var(--red-text);
+        opacity: 1;
+      }
     }
 
     @media (hover: none) {
@@ -1713,6 +1765,22 @@
       }
       .hero__breadcrumb a:active {
         color: var(--text);
+      }
+      a.menu-overlay__item:active {
+        background-color: var(--surface);
+        border-bottom-color: var(--red);
+      }
+      a.menu-overlay__item:active .menu-overlay__title {
+        opacity: 1;
+        color: var(--red-text);
+      }
+      a.tool-card:active {
+        transform: scale(0.98);
+        border-color: var(--red);
+      }
+      a.tool-card:active .tool-card__title {
+        color: var(--red-text);
+        opacity: 1;
       }
     }
 
@@ -1821,11 +1889,11 @@
         <span class="menu-overlay__title">Cartões</span>
         <span class="menu-overlay__tag">EM BREVE</span>
       </div>
-      <div class="menu-overlay__item" tabindex="-1">
+      <a href="/pixfalso.html" class="menu-overlay__item is-active">
         <span class="menu-overlay__num">04</span>
         <span class="menu-overlay__title">Bancos falsos</span>
-        <span class="menu-overlay__tag">EM BREVE</span>
-      </div>
+        <span class="menu-overlay__tag">ABRIR</span>
+      </a>
       <div class="menu-overlay__item" tabindex="-1">
         <span class="menu-overlay__num">05</span>
         <span class="menu-overlay__title">Burladores</span>
@@ -2020,7 +2088,7 @@
             <p class="tool-card__desc">Base organizada por bandeira e país, com BIN, validade e status. Formato pronto pra importar.</p>
             <div class="tool-card__footer">LIBERAÇÃO EM BREVE — ENTRE NO GRUPO PRA SER AVISADO</div>
           </div>
-          <div class="tool-card reveal">
+          <a href="/pixfalso.html" class="tool-card reveal">
             <svg class="tool-card__corner tool-card__corner--tl" viewBox="0 0 8 8" aria-hidden="true"><path d="M4 0V8M0 4H8" stroke="currentColor" stroke-width="1"/></svg>
             <svg class="tool-card__corner tool-card__corner--tr" viewBox="0 0 8 8" aria-hidden="true"><path d="M4 0V8M0 4H8" stroke="currentColor" stroke-width="1"/></svg>
             <svg class="tool-card__corner tool-card__corner--bl" viewBox="0 0 8 8" aria-hidden="true"><path d="M4 0V8M0 4H8" stroke="currentColor" stroke-width="1"/></svg>
@@ -2032,11 +2100,11 @@
             </svg>
             <span class="tool-card__index" aria-hidden="true">04</span>
             <div class="tool-card__num">04</div>
-            <div class="tool-card__tag">EM BREVE</div>
+            <div class="tool-card__tag">ABRIR</div>
             <h3 class="tool-card__title">Bancos falsos</h3>
             <p class="tool-card__desc">Templates de banco com nome, logo e comprovante. Serve pra dar credibilidade na entrega.</p>
-            <div class="tool-card__footer">LIBERAÇÃO EM BREVE — ENTRE NO GRUPO PRA SER AVISADO</div>
-          </div>
+            <div class="tool-card__footer">ACESSAR AGORA →</div>
+          </a>
           <div class="tool-card reveal">
             <svg class="tool-card__corner tool-card__corner--tl" viewBox="0 0 8 8" aria-hidden="true"><path d="M4 0V8M0 4H8" stroke="currentColor" stroke-width="1"/></svg>
             <svg class="tool-card__corner tool-card__corner--tr" viewBox="0 0 8 8" aria-hidden="true"><path d="M4 0V8M0 4H8" stroke="currentColor" stroke-width="1"/></svg>
@@ -2431,10 +2499,29 @@
         }
       });
 
+      /* Links internos do menu: fecha o overlay e deixa a navegação acontecer */
       menuOverlay.querySelectorAll('a[href]').forEach(function(link) {
-        link.addEventListener('click', function() {
+        link.addEventListener('click', function(e) {
+          const href = link.getAttribute('href') || '';
+          const isHash = href.charAt(0) === '#';
+          const isBlank = link.target === '_blank';
+
           if (menuOpen) {
-            closeMenu();
+            if (!isHash && !isBlank) {
+              // navegação real: só fecha sem restaurar scroll
+              menuOpen = false;
+              hamburger.setAttribute('aria-expanded', 'false');
+              hamburger.setAttribute('aria-label', 'Abrir menu');
+              menuOverlay.classList.remove('is-open');
+              body.style.overflow = '';
+              body.style.position = '';
+              body.style.top = '';
+              body.style.width = '';
+              document.removeEventListener('keydown', handleEscape);
+              document.removeEventListener('keydown', trapFocus);
+            } else {
+              closeMenu();
+            }
           }
         });
       });
