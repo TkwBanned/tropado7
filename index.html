@@ -13,6 +13,7 @@
   <link rel="alternate" hreflang="pt-BR" href="https://tropado7.com.br/">
   <link rel="alternate" hreflang="x-default" href="https://tropado7.com.br/">
   <link rel="preconnect" href="https://i.imgur.com">
+  <link rel="preconnect" href="https://cse.google.com">
 
   <!-- Favicons -->
   <link rel="icon" href="https://i.imgur.com/Lp1Ks7c.jpeg">
@@ -1603,6 +1604,49 @@
       background: var(--hairline);
       border-radius: 3px;
     }
+
+    /* ===== BUSCA ===== */
+    .search-box {
+      background-color: var(--surface);
+      border: 1px solid var(--hairline);
+      border-radius: var(--radius);
+      padding: 16px;
+    }
+    .search-box .gsc-control-cse,
+    .search-box .gsc-control-wrapper-cse {
+      background: transparent;
+      border: none;
+      padding: 0;
+      font-family: var(--font-body);
+    }
+    .search-box .gsc-input-box {
+      background-color: var(--bg);
+      border: 1px solid var(--hairline);
+      border-radius: var(--radius);
+      height: 44px;
+    }
+    .search-box .gsc-input {
+      background: transparent !important;
+      color: var(--text) !important;
+    }
+    .search-box .gsc-search-button-v2 {
+      background-color: var(--red-cta);
+      border: none;
+      border-radius: var(--radius);
+      padding: 12px 16px;
+      cursor: pointer;
+    }
+    .search-box .gsc-search-button-v2 svg { fill: #0A0A0A; }
+    .search-box .gs-title,
+    .search-box .gs-title b { color: var(--text) !important; }
+    .search-box .gs-snippet { color: var(--text-sec) !important; }
+    .search-box .gsc-table-result { color: var(--text-sec); }
+    .search-box .gsc-above-wrapper-area { border-color: var(--hairline); }
+    .search-box .gsc-cursor-page { color: var(--text); }
+    .search-box .gsc-cursor-current-page { color: var(--red-cta); }
+    .search-box .gsc-results .gsc-webResult { border-color: var(--hairline); }
+    .search-box .gsc-orderby-label,
+    .search-box .gsc-result-info { color: var(--text-sec); }
   </style>
 </head>
 <body>
@@ -2065,6 +2109,20 @@
             </div>
             <svg class="glossary-list__diamond" viewBox="0 0 6 6" fill="none" aria-hidden="true"><path d="M3 0L6 3L3 6L0 3L3 0Z" fill="currentColor"/></svg>
           </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SEÇÃO 06 — BUSCA ===== -->
+    <section class="section" id="busca">
+      <div class="container">
+        <div class="section__header reveal">
+          <span class="section__num">06</span>
+          <h2 class="section__title">BUSCAR NO SITE</h2>
+        </div>
+        <div class="search-box reveal">
+          <script async src="https://cse.google.com/cse.js?cx=261701e754dbc47e9"></script>
+          <div class="gcse-search"></div>
         </div>
       </div>
     </section>
