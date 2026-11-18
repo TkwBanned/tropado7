@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://tropado7.com.br/sitemap.xml
+Sitemap: https://tropado7.com/sitemap.xml
