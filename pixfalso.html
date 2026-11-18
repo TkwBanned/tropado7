@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" data-app="inter">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Pix Falso Inter — APK para Android | Tropa do 7</title>
-  <meta name="description" content="Baixe o APK do Pix Falso Inter direto do site, sem encurtador e sem cadastro. Comprovante de Pix editável, telas reais e passo a passo de instalação.">
+  <title>Bancos Falsos — Pix Falso Inter e Nubank (APK) | Tropa do 7</title>
+  <meta name="description" content="Baixe os APKs de Pix Falso Inter e Nubank direto do site, sem encurtador e sem cadastro. Comprovante de Pix editável, telas reais e passo a passo de instalação.">
   <meta name="author" content="Sariel OzN">
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
   <meta name="theme-color" content="#0A0A0A">
@@ -16,31 +16,35 @@
   <link rel="manifest" href="/site.webmanifest">
 
   <meta property="og:site_name" content="Tropa do 7">
-  <meta property="og:title" content="Pix Falso Inter — APK para Android | Tropa do 7">
-  <meta property="og:description" content="Baixe o APK do Pix Falso Inter direto do site, sem encurtador e sem cadastro.">
+  <meta property="og:title" content="Bancos Falsos — Pix Falso Inter e Nubank (APK) | Tropa do 7">
+  <meta property="og:description" content="Baixe os APKs de Pix Falso Inter e Nubank direto do site, sem encurtador e sem cadastro.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://tropado7.com.br/pixfalso.html">
   <meta property="og:image" content="https://i.imgur.com/Lp1Ks7c.jpeg">
-  <meta property="og:image:alt" content="Pix Falso Inter — Tropa do 7">
+  <meta property="og:image:alt" content="Bancos Falsos — Tropa do 7">
   <meta property="og:locale" content="pt_BR">
 
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Pix Falso Inter — APK para Android | Tropa do 7">
-  <meta name="twitter:description" content="Baixe o APK do Pix Falso Inter direto do site, sem encurtador e sem cadastro.">
+  <meta name="twitter:title" content="Bancos Falsos — Pix Falso Inter e Nubank (APK) | Tropa do 7">
+  <meta name="twitter:description" content="Baixe os APKs de Pix Falso Inter e Nubank direto do site, sem encurtador e sem cadastro.">
   <meta name="twitter:image" content="https://i.imgur.com/Lp1Ks7c.jpeg">
-  <meta name="twitter:image:alt" content="Pix Falso Inter — Tropa do 7">
+  <meta name="twitter:image:alt" content="Bancos Falsos — Tropa do 7">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter+Tight:wght@400;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
 
   <script>
-    /* Se a página foi aberta vindo do índice (ou de outra página interna), o véu já entra cobrindo */
+    /* Véu de entrada + restaura a aba usada por último */
     (function () {
       try {
         if (sessionStorage.getItem('veilIn') === '1') {
           sessionStorage.removeItem('veilIn');
           document.documentElement.classList.add('veil-incoming');
+        }
+        var saved = sessionStorage.getItem('activeApp');
+        if (saved === 'nubank' || saved === 'inter') {
+          document.documentElement.setAttribute('data-app', saved);
         }
       } catch (e) {}
     })();
@@ -76,12 +80,24 @@
         "url": "https://tropado7.com.br/pixfalso.html",
         "offers": { "@type": "Offer", "price": "0", "priceCurrency": "BRL" },
         "publisher": { "@type": "Organization", "name": "Tropa do 7 — Equipe 5:30" }
+      },
+      {
+        "@type": "SoftwareApplication",
+        "name": "Pix Falso Nubank",
+        "applicationCategory": "UtilitiesApplication",
+        "operatingSystem": "Android 8.0+",
+        "softwareVersion": "1.0",
+        "fileFormat": "application/vnd.android.package-archive",
+        "downloadUrl": "https://tropado7.com.br/downloads/pixfalso-nubank.apk",
+        "url": "https://tropado7.com.br/pixfalso.html",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "BRL" },
+        "publisher": { "@type": "Organization", "name": "Tropa do 7 — Equipe 5:30" }
       }
     ]
   }
   </script>
 
-  <noscript><style>.reveal{opacity:1;transform:none}.veil{display:none}</style></noscript>
+  <noscript><style>.reveal{opacity:1;transform:none}.veil{display:none}[hidden]{display:none!important}</style></noscript>
 
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -95,12 +111,25 @@
       --red: #E10600;
       --red-cta: #FF3B30;
       --red-text: #FF3B30;
-      --nubank: #820AD1;
+
+      /* accent padrão = Inter */
+      --accent: #FF3B30;
+      --accent-soft: #FF4B41;
+      --accent-deep: #C00500;
+      --accent-glow: rgba(225, 6, 0, 0.34);
+
       --font-display: 'Anton', sans-serif;
       --font-body: 'Inter Tight', sans-serif;
       --font-mono: 'JetBrains Mono', monospace;
       --radius: 4px;
       --transition: cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    html[data-app="nubank"] {
+      --accent: #A855F7;
+      --accent-soft: #C084FC;
+      --accent-deep: #6B08AD;
+      --accent-glow: rgba(130, 10, 209, 0.4);
     }
 
     html {
@@ -150,7 +179,7 @@
     ul, ol { list-style: none; }
     button, a, summary { touch-action: manipulation; }
 
-    :focus-visible { outline: 2px solid var(--red-cta); outline-offset: 3px; }
+    :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 
     /* ===== VÉU DE TRANSIÇÃO ===== */
     .veil {
@@ -237,7 +266,7 @@
       border: 1px solid var(--hairline);
       border-radius: var(--radius);
       color: var(--text);
-      transition: border-color 0.3s var(--transition), color 0.3s var(--transition), transform 0.3s var(--transition);
+      transition: border-color 0.3s var(--transition), color 0.3s var(--transition);
     }
 
     .topbar__back svg { width: 18px; height: 18px; }
@@ -410,7 +439,7 @@
       gap: 8px;
       min-height: 48px;
       padding: 0 24px;
-      background-color: var(--red-cta);
+      background-color: var(--accent);
       color: #0A0A0A;
       font-family: var(--font-mono);
       font-weight: 500;
@@ -441,10 +470,10 @@
       min-height: 58px;
       font-size: 13px;
       border-radius: 10px;
-      background-image: linear-gradient(135deg, #FF4B41 0%, #E10600 55%, #C00500 100%);
+      background-image: linear-gradient(135deg, var(--accent-soft) 0%, var(--accent) 55%, var(--accent-deep) 100%);
       color: #fff;
       box-shadow:
-        0 14px 32px rgba(225, 6, 0, 0.4),
+        0 14px 32px var(--accent-glow),
         inset 0 1px 0 rgba(255, 255, 255, 0.28);
     }
 
@@ -483,7 +512,7 @@
       font-family: var(--font-mono);
       font-size: 11px;
       letter-spacing: 0.12em;
-      color: var(--red-text);
+      color: var(--accent);
       flex-shrink: 0;
       display: inline-flex;
       align-items: center;
@@ -495,7 +524,7 @@
       display: inline-block;
       width: 2px;
       height: 20px;
-      background-color: var(--red);
+      background-color: var(--accent);
     }
 
     .section__title {
@@ -506,8 +535,72 @@
       line-height: 0.92;
     }
 
+    /* ===== ABAS ===== */
+    .tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      border: 1px solid var(--hairline);
+      background-color: var(--surface);
+      border-radius: 12px;
+      padding: 6px;
+      margin-bottom: 26px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .tab {
+      min-height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      background: none;
+      color: var(--text-sec);
+      font-family: var(--font-mono);
+      font-weight: 500;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background-color 0.35s var(--transition), color 0.35s var(--transition), box-shadow 0.35s var(--transition);
+    }
+
+    .tab__dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .tab__dot--inter { background-color: #FF3B30; }
+    .tab__dot--nubank { background-color: #A855F7; }
+
+    .tab[aria-selected="true"] {
+      background-color: var(--accent);
+      border-color: var(--accent);
+      color: #0A0A0A;
+      box-shadow: 0 8px 20px var(--accent-glow);
+    }
+
+    .tab[aria-selected="true"] .tab__dot { background-color: #0A0A0A; }
+
+    /* ===== PAINÉIS ===== */
+    .panel { animation: panelIn 0.45s var(--transition); }
+
+    @keyframes panelIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: none; }
+    }
+
+    .panel[hidden] { display: none; }
+
     /* ===== HERO ===== */
     .hero { padding-top: 78px; padding-bottom: 40px; position: relative; overflow: hidden; }
+
+    .hero--inner { padding-top: 26px; padding-bottom: 34px; }
 
     .hero::after {
       content: '';
@@ -567,10 +660,10 @@
 
     .hero__title { margin-bottom: 18px; position: relative; z-index: 1; }
     .hero__title-line { display: block; }
-    .hero__title-line--outline { -webkit-text-stroke: 1.5px var(--red); color: transparent; }
+    .hero__title-line--outline { -webkit-text-stroke: 1.5px var(--accent); color: transparent; }
 
     @supports not (-webkit-text-stroke: 1px red) {
-      .hero__title-line--outline { color: var(--red); }
+      .hero__title-line--outline { color: var(--accent); }
     }
 
     .hero__stats {
@@ -639,7 +732,7 @@
       content: '';
       position: absolute;
       inset: -22px -34px;
-      background: radial-gradient(circle, rgba(225, 6, 0, 0.34) 0%, transparent 68%);
+      background: radial-gradient(circle, var(--accent-glow) 0%, transparent 68%);
       filter: blur(16px);
       z-index: -1;
     }
@@ -684,7 +777,7 @@
       gap: 12px;
       align-items: flex-start;
       border: 1px solid var(--hairline);
-      border-left: 2px solid var(--red);
+      border-left: 2px solid var(--accent);
       background-color: var(--surface);
       padding: 16px;
       margin-top: 24px;
@@ -692,7 +785,7 @@
       z-index: 1;
     }
 
-    .note svg { width: 18px; height: 18px; flex-shrink: 0; color: var(--red-text); margin-top: 2px; }
+    .note svg { width: 18px; height: 18px; flex-shrink: 0; color: var(--accent); margin-top: 2px; }
 
     .note__text { font-size: 13px; color: var(--text-sec); line-height: 1.6; }
     .note__text strong { color: var(--text); font-weight: 600; }
@@ -715,7 +808,7 @@
       width: 5px;
       height: 5px;
       border-radius: 50%;
-      background-color: var(--red-cta);
+      background-color: var(--accent);
       animation: badgePulse 2s ease-in-out infinite;
     }
 
@@ -793,13 +886,13 @@
       align-items: flex-start;
     }
 
-    .feat-list__item:first-child { border-top: 1px solid var(--hairline); border-left-color: var(--red); }
+    .feat-list__item:first-child { border-top: 1px solid var(--hairline); border-left-color: var(--accent); }
 
     .feat-list__num {
       font-family: var(--font-mono);
       font-size: 11px;
       letter-spacing: 0.12em;
-      color: var(--red-text);
+      color: var(--accent);
       min-width: 28px;
       padding-top: 3px;
     }
@@ -835,8 +928,8 @@
       width: 28px;
       height: 28px;
       border-radius: 50%;
-      border: 1px solid var(--red);
-      color: var(--red-text);
+      border: 1px solid var(--accent);
+      color: var(--accent);
       font-family: var(--font-mono);
       font-size: 12px;
       display: flex;
@@ -863,12 +956,12 @@
       height: 44px;
       flex-shrink: 0;
       border-radius: 12px;
-      background-color: rgba(130, 10, 209, 0.14);
-      border: 1px solid rgba(130, 10, 209, 0.4);
+      background-color: rgba(140, 140, 140, 0.12);
+      border: 1px solid var(--hairline);
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #B266F5;
+      color: var(--text-sec);
     }
 
     .soon__icon svg { width: 20px; height: 20px; }
@@ -891,8 +984,8 @@
       font-size: 9px;
       letter-spacing: 0.12em;
       text-transform: uppercase;
-      color: #B266F5;
-      border: 1px solid rgba(130, 10, 209, 0.4);
+      color: var(--text-sec);
+      border: 1px solid var(--hairline);
       border-radius: 999px;
       padding: 5px 10px;
       white-space: nowrap;
@@ -932,11 +1025,12 @@
 
     /* ===== CTA FINAL ===== */
     .cta-final {
-      background-color: var(--red);
+      background-color: var(--accent);
       border-radius: var(--radius);
       padding: 38px 22px;
       position: relative;
       overflow: hidden;
+      transition: background-color 0.4s var(--transition);
     }
 
     .cta-final::before {
@@ -1176,10 +1270,12 @@
       .steps { flex-direction: row; flex-wrap: wrap; }
       .steps__item { flex: 1 1 240px; }
       .gallery__item { width: 40vw; }
+      .tab { font-size: 12px; }
     }
 
     @media (min-width: 900px) {
       .hero { padding-top: 128px; padding-bottom: 88px; }
+      .hero--inner { padding-top: 26px; padding-bottom: 60px; }
       .hero__grid { display: grid; grid-template-columns: 1fr 300px; gap: 48px; align-items: center; }
       .phone { margin: 0; width: 260px; }
       .section { padding: 88px 0; }
@@ -1191,29 +1287,31 @@
       .menu-overlay { padding: 120px 64px 48px; }
       .cta-final { padding: 60px 54px; }
       .hero__ghost { font-size: 220px; }
+      .tabs { max-width: 460px; }
     }
 
     @media (hover: hover) and (pointer: fine) {
       .btn:hover, .cta-final__btn:hover { transform: translateY(-3px); filter: brightness(1.1); }
       .btn:hover .btn__arrow, .cta-final__btn:hover .btn__arrow { transform: translateX(4px); }
-      .btn--ghost:hover { border-color: var(--red); color: var(--red-text); }
+      .btn--ghost:hover { border-color: var(--accent); color: var(--accent); }
       .topbar__back:hover { border-color: var(--red); color: var(--red-text); }
-      .faq-item summary:hover { color: var(--red-text); }
+      .faq-item summary:hover { color: var(--accent); }
       .hero__breadcrumb a:hover { color: var(--text); }
-      .back-site__link:hover { color: var(--red-text); border-color: var(--red); }
+      .back-site__link:hover { color: var(--accent); border-color: var(--accent); }
       a.menu-overlay__item:hover { background-color: var(--surface); border-bottom-color: var(--red); }
       a.menu-overlay__item:hover .menu-overlay__title { opacity: 1; color: var(--red-text); }
-      .gallery__item:hover { border-color: var(--red); transform: translateY(-4px); }
-      .lightbox__nav button:hover, .lightbox__close:hover { border-color: var(--red); color: var(--red-text); }
+      .gallery__item:hover { border-color: var(--accent); transform: translateY(-4px); }
+      .lightbox__nav button:hover, .lightbox__close:hover { border-color: var(--accent); color: var(--accent); }
+      .tab[aria-selected="false"]:hover { color: var(--text); background-color: rgba(255, 255, 255, 0.04); }
     }
 
     @media (hover: none) {
       .btn:active, .cta-final__btn:active { transform: scale(0.97); filter: brightness(1.08); }
-      .faq-item summary:active { color: var(--red-text); }
+      .faq-item summary:active { color: var(--accent); }
       .topbar__back:active { border-color: var(--red); color: var(--red-text); }
       a.menu-overlay__item:active { background-color: var(--surface); border-bottom-color: var(--red); }
       a.menu-overlay__item:active .menu-overlay__title { opacity: 1; color: var(--red-text); }
-      .gallery__item:active { border-color: var(--red); }
+      .gallery__item:active { border-color: var(--accent); }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -1238,7 +1336,7 @@
   <div class="progress-bar" id="progressBar" aria-hidden="true"></div>
 
   <header class="topbar">
-    <a href="/index.html" class="topbar__back" id="backBtn" aria-label="Voltar ao site principal">
+    <a href="/index.html" class="topbar__back" aria-label="Voltar ao site principal" data-back>
       <svg viewBox="0 0 18 18" fill="none" aria-hidden="true">
         <path d="M11 3L5 9L11 15" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
@@ -1308,138 +1406,303 @@
         <span class="current" aria-current="page">BANCOS FALSOS</span>
       </nav>
 
-      <div class="hero__grid">
-        <div>
-          <span class="hero__label reveal">APK · ANDROID · BANCO FALSO</span>
-          <h1 class="hero__title reveal">
-            <span class="hero__title-line">PIX FALSO</span>
-            <span class="hero__title-line hero__title-line--outline">INTER</span>
-          </h1>
-          <div class="hero__stats reveal">
-            <div class="hero__stat">
-              <span class="hero__stat-num">1.0</span>
-              <span class="hero__stat-label">Versão</span>
-            </div>
-            <div class="hero__stat">
-              <span class="hero__stat-num">16 MB</span>
-              <span class="hero__stat-label">Tamanho</span>
-            </div>
-            <div class="hero__stat">
-              <span class="hero__stat-num">8.0+</span>
-              <span class="hero__stat-label">Android</span>
-            </div>
-          </div>
-          <p class="hero__subtitle reveal">App de comprovante de Pix com a cara do Inter. Preenche valor, nome, chave e data, e o comprovante sai pronto pra print ou PDF. O APK está hospedado aqui mesmo — baixa direto, sem encurtador e sem cadastro.</p>
-
-          <div class="reveal">
-            <a href="/downloads/pixfalso-inter.apk"
-               download="PixFalsoInter.apk"
-               type="application/vnd.android.package-archive"
-               class="btn btn--block btn--download">
-              BAIXAR APK AGORA
-              <svg class="btn__arrow" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                <path d="M8 2V11M4 8L8 12L12 8M2 14H14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </a>
-            <span class="hero__microcopy">APK DIRETO DO SERVIDOR · SEM CADASTRO</span>
-          </div>
-        </div>
-
-        <div class="phone reveal">
-          <div class="phone__frame">
-            <span class="phone__notch" aria-hidden="true"></span>
-            <img src="/img/pixfalsointer/imagem1.jpg.jpeg" alt="Tela inicial do Pix Falso Inter" width="360" height="760" fetchpriority="high" decoding="async">
-          </div>
-        </div>
-      </div>
-
-      <div class="note reveal">
-        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path d="M12 3L21 19H3L12 3Z" stroke="currentColor" stroke-width="1.5"/>
-          <path d="M12 9V13" stroke="currentColor" stroke-width="1.5"/>
-          <circle cx="12" cy="16" r="0.9" fill="currentColor"/>
-        </svg>
-        <p class="note__text"><strong>APK fora da Play Store.</strong> O Android vai pedir pra liberar "instalar apps desconhecidos" na primeira vez. É normal — o passo a passo está logo abaixo.</p>
+      <div class="tabs reveal" role="tablist" aria-label="Escolha o banco">
+        <button class="tab" role="tab" id="tabInter" aria-selected="true" aria-controls="panelInter" data-target="inter">
+          <span class="tab__dot tab__dot--inter" aria-hidden="true"></span>
+          INTER
+        </button>
+        <button class="tab" role="tab" id="tabNubank" aria-selected="false" aria-controls="panelNubank" data-target="nubank" tabindex="-1">
+          <span class="tab__dot tab__dot--nubank" aria-hidden="true"></span>
+          NUBANK
+        </button>
       </div>
     </div>
   </section>
 
   <main>
-    <section class="section" id="telas">
-      <div class="container">
-        <div class="section__header reveal">
-          <span class="section__num">01</span>
-          <h2 class="section__title">TELAS DO APP</h2>
-        </div>
-        <p class="gallery-meta reveal">06 telas · na ordem · toque pra ampliar</p>
-        <div class="gallery" id="gallery">
-          <a class="gallery__item reveal" data-index="0" href="/img/pixfalsointer/imagem1.jpg.jpeg">
-            <img src="/img/pixfalsointer/imagem1.jpg.jpeg" alt="Tela 1 do Pix Falso Inter" width="360" height="680" loading="lazy" decoding="async">
-            <span>01 · INÍCIO</span>
-          </a>
-          <a class="gallery__item reveal" data-index="1" href="/img/pixfalsointer/imagem2.jpg.jpeg">
-            <img src="/img/pixfalsointer/imagem2.jpg.jpeg" alt="Tela 2 do Pix Falso Inter" width="360" height="680" loading="lazy" decoding="async">
-            <span>02 · PREENCHIMENTO</span>
-          </a>
-          <a class="gallery__item reveal" data-index="2" href="/img/pixfalsointer/imagem3.jpg.jpeg">
-            <img src="/img/pixfalsointer/imagem3.jpg.jpeg" alt="Tela 3 do Pix Falso Inter" width="360" height="680" loading="lazy" decoding="async">
-            <span>03 · DADOS</span>
-          </a>
-          <a class="gallery__item reveal" data-index="3" href="/img/pixfalsointer/imagem4.jpg.jpeg">
-            <img src="/img/pixfalsointer/imagem4.jpg.jpeg" alt="Tela 4 do Pix Falso Inter" width="360" height="680" loading="lazy" decoding="async">
-            <span>04 · COMPROVANTE</span>
-          </a>
-          <a class="gallery__item reveal" data-index="4" href="/img/pixfalsointer/imagem5.jpg.jpeg">
-            <img src="/img/pixfalsointer/imagem5.jpg.jpeg" alt="Tela 5 do Pix Falso Inter" width="360" height="680" loading="lazy" decoding="async">
-            <span>05 · EXPORTAR</span>
-          </a>
-          <a class="gallery__item reveal" data-index="5" href="/img/pixfalsointer/imagem6.jpg.jpeg">
-            <img src="/img/pixfalsointer/imagem6.jpg.jpeg" alt="Tela 6 do Pix Falso Inter" width="360" height="680" loading="lazy" decoding="async">
-            <span>06 · HISTÓRICO</span>
-          </a>
-        </div>
-        <span class="gallery__hint">DESLIZE PRA VER AS 6 TELAS →</span>
-      </div>
-    </section>
+    <!-- ===================== PAINEL INTER ===================== -->
+    <div class="panel" id="panelInter" role="tabpanel" aria-labelledby="tabInter" data-app="inter">
+      <section class="hero hero--inner">
+        <span class="hero__ghost" aria-hidden="true">PIX</span>
+        <div class="container">
+          <div class="hero__grid">
+            <div>
+              <span class="hero__label reveal">APK · ANDROID · BANCO FALSO</span>
+              <h1 class="hero__title reveal">
+                <span class="hero__title-line">PIX FALSO</span>
+                <span class="hero__title-line hero__title-line--outline">INTER</span>
+              </h1>
+              <div class="hero__stats reveal">
+                <div class="hero__stat">
+                  <span class="hero__stat-num">1.0</span>
+                  <span class="hero__stat-label">Versão</span>
+                </div>
+                <div class="hero__stat">
+                  <span class="hero__stat-num">16 MB</span>
+                  <span class="hero__stat-label">Tamanho</span>
+                </div>
+                <div class="hero__stat">
+                  <span class="hero__stat-num">8.0+</span>
+                  <span class="hero__stat-label">Android</span>
+                </div>
+              </div>
+              <p class="hero__subtitle reveal">App de comprovante de Pix com a cara do Inter. Preenche valor, nome, chave e data, e o comprovante sai pronto pra print ou PDF. O APK está hospedado aqui mesmo — baixa direto, sem encurtador e sem cadastro.</p>
 
-    <section class="section" id="recursos">
-      <div class="container">
-        <div class="section__header reveal">
-          <span class="section__num">02</span>
-          <h2 class="section__title">O QUE VEM NO APP</h2>
-        </div>
-        <div class="feat-list">
-          <div class="feat-list__item reveal">
-            <span class="feat-list__num">01</span>
-            <div class="feat-list__body">
-              <h3 class="feat-list__title">Layout do Inter</h3>
-              <p class="feat-list__desc">Cores, fonte, ícones e cabeçalho fiéis ao app original. Bate o olho e parece o banco.</p>
+              <div class="reveal">
+                <a href="/downloads/pixfalso-inter.apk"
+                   download="PixFalsoInter.apk"
+                   type="application/vnd.android.package-archive"
+                   class="btn btn--block btn--download">
+                  BAIXAR APK AGORA
+                  <svg class="btn__arrow" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                    <path d="M8 2V11M4 8L8 12L12 8M2 14H14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </a>
+                <span class="hero__microcopy">APK DIRETO DO SERVIDOR · SEM CADASTRO</span>
+              </div>
+            </div>
+
+            <div class="phone reveal">
+              <div class="phone__frame">
+                <span class="phone__notch" aria-hidden="true"></span>
+                <img src="/img/pixfalsointer/imagem1.jpg.jpeg" alt="Tela inicial do Pix Falso Inter" width="360" height="760" fetchpriority="high" decoding="async">
+              </div>
             </div>
           </div>
-          <div class="feat-list__item reveal">
-            <span class="feat-list__num">02</span>
-            <div class="feat-list__body">
-              <h3 class="feat-list__title">Comprovante completo</h3>
-              <p class="feat-list__desc">Valor, nome do recebedor, chave Pix, banco, data e hora — tudo editável antes de gerar.</p>
-            </div>
-          </div>
-          <div class="feat-list__item reveal">
-            <span class="feat-list__num">03</span>
-            <div class="feat-list__body">
-              <h3 class="feat-list__title">Salvar e compartilhar</h3>
-              <p class="feat-list__desc">Gera imagem em alta resolução e manda direto pro WhatsApp, ou salva na galeria pra print.</p>
-            </div>
-          </div>
-          <div class="feat-list__item reveal">
-            <span class="feat-list__num">04</span>
-            <div class="feat-list__body">
-              <h3 class="feat-list__title">Funciona offline</h3>
-              <p class="feat-list__desc">Não precisa de internet pra gerar. Só instalar e usar, em qualquer lugar.</p>
-            </div>
+
+          <div class="note reveal">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M12 3L21 19H3L12 3Z" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M12 9V13" stroke="currentColor" stroke-width="1.5"/>
+              <circle cx="12" cy="16" r="0.9" fill="currentColor"/>
+            </svg>
+            <p class="note__text"><strong>APK fora da Play Store.</strong> O Android vai pedir pra liberar "instalar apps desconhecidos" na primeira vez. É normal — o passo a passo está logo abaixo.</p>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+
+      <section class="section" id="telas-inter">
+        <div class="container">
+          <div class="section__header reveal">
+            <span class="section__num">01</span>
+            <h2 class="section__title">TELAS DO APP</h2>
+          </div>
+          <p class="gallery-meta reveal">06 telas · na ordem · toque pra ampliar</p>
+          <div class="gallery">
+            <a class="gallery__item reveal" href="/img/pixfalsointer/imagem1.jpg.jpeg">
+              <img src="/img/pixfalsointer/imagem1.jpg.jpeg" alt="Tela 1 do Pix Falso Inter" width="360" height="680" loading="lazy" decoding="async">
+              <span>01 · INÍCIO</span>
+            </a>
+            <a class="gallery__item reveal" href="/img/pixfalsointer/imagem2.jpg.jpeg">
+              <img src="/img/pixfalsointer/imagem2.jpg.jpeg" alt="Tela 2 do Pix Falso Inter" width="360" height="680" loading="lazy" decoding="async">
+              <span>02 · PREENCHIMENTO</span>
+            </a>
+            <a class="gallery__item reveal" href="/img/pixfalsointer/imagem3.jpg.jpeg">
+              <img src="/img/pixfalsointer/imagem3.jpg.jpeg" alt="Tela 3 do Pix Falso Inter" width="360" height="680" loading="lazy" decoding="async">
+              <span>03 · DADOS</span>
+            </a>
+            <a class="gallery__item reveal" href="/img/pixfalsointer/imagem4.jpg.jpeg">
+              <img src="/img/pixfalsointer/imagem4.jpg.jpeg" alt="Tela 4 do Pix Falso Inter" width="360" height="680" loading="lazy" decoding="async">
+              <span>04 · COMPROVANTE</span>
+            </a>
+            <a class="gallery__item reveal" href="/img/pixfalsointer/imagem5.jpg.jpeg">
+              <img src="/img/pixfalsointer/imagem5.jpg.jpeg" alt="Tela 5 do Pix Falso Inter" width="360" height="680" loading="lazy" decoding="async">
+              <span>05 · EXPORTAR</span>
+            </a>
+            <a class="gallery__item reveal" href="/img/pixfalsointer/imagem6.jpg.jpeg">
+              <img src="/img/pixfalsointer/imagem6.jpg.jpeg" alt="Tela 6 do Pix Falso Inter" width="360" height="680" loading="lazy" decoding="async">
+              <span>06 · HISTÓRICO</span>
+            </a>
+          </div>
+          <span class="gallery__hint">DESLIZE PRA VER AS 6 TELAS →</span>
+        </div>
+      </section>
+
+      <section class="section" id="recursos-inter">
+        <div class="container">
+          <div class="section__header reveal">
+            <span class="section__num">02</span>
+            <h2 class="section__title">O QUE VEM NO APP</h2>
+          </div>
+          <div class="feat-list">
+            <div class="feat-list__item reveal">
+              <span class="feat-list__num">01</span>
+              <div class="feat-list__body">
+                <h3 class="feat-list__title">Layout do Inter</h3>
+                <p class="feat-list__desc">Cores, fonte, ícones e cabeçalho fiéis ao app original. Bate o olho e parece o banco.</p>
+              </div>
+            </div>
+            <div class="feat-list__item reveal">
+              <span class="feat-list__num">02</span>
+              <div class="feat-list__body">
+                <h3 class="feat-list__title">Comprovante completo</h3>
+                <p class="feat-list__desc">Valor, nome do recebedor, chave Pix, banco, data e hora — tudo editável antes de gerar.</p>
+              </div>
+            </div>
+            <div class="feat-list__item reveal">
+              <span class="feat-list__num">03</span>
+              <div class="feat-list__body">
+                <h3 class="feat-list__title">Salvar e compartilhar</h3>
+                <p class="feat-list__desc">Gera imagem em alta resolução e manda direto pro WhatsApp, ou salva na galeria pra print.</p>
+              </div>
+            </div>
+            <div class="feat-list__item reveal">
+              <span class="feat-list__num">04</span>
+              <div class="feat-list__body">
+                <h3 class="feat-list__title">Funciona offline</h3>
+                <p class="feat-list__desc">Não precisa de internet pra gerar. Só instalar e usar, em qualquer lugar.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- ===================== PAINEL NUBANK ===================== -->
+    <div class="panel" id="panelNubank" role="tabpanel" aria-labelledby="tabNubank" data-app="nubank" hidden>
+      <section class="hero hero--inner">
+        <span class="hero__ghost" aria-hidden="true">PIX</span>
+        <div class="container">
+          <div class="hero__grid">
+            <div>
+              <span class="hero__label reveal">APK · ANDROID · BANCO FALSO</span>
+              <h1 class="hero__title reveal">
+                <span class="hero__title-line">PIX FALSO</span>
+                <span class="hero__title-line hero__title-line--outline">NUBANK</span>
+              </h1>
+              <div class="hero__stats reveal">
+                <div class="hero__stat">
+                  <span class="hero__stat-num">1.0</span>
+                  <span class="hero__stat-label">Versão</span>
+                </div>
+                <div class="hero__stat">
+                  <span class="hero__stat-num">18 MB</span>
+                  <span class="hero__stat-label">Tamanho</span>
+                </div>
+                <div class="hero__stat">
+                  <span class="hero__stat-num">8.0+</span>
+                  <span class="hero__stat-label">Android</span>
+                </div>
+              </div>
+              <p class="hero__subtitle reveal">App de comprovante de Pix com a identidade do Nubank. Preenche valor, nome, chave e data, e o comprovante roxinho sai pronto pra print ou PDF. O APK está hospedado aqui mesmo — baixa direto, sem encurtador e sem cadastro.</p>
+
+              <div class="reveal">
+                <a href="/downloads/pixfalso-nubank.apk"
+                   download="PixFalsoNubank.apk"
+                   type="application/vnd.android.package-archive"
+                   class="btn btn--block btn--download">
+                  BAIXAR APK AGORA
+                  <svg class="btn__arrow" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                    <path d="M8 2V11M4 8L8 12L12 8M2 14H14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </a>
+                <span class="hero__microcopy">APK DIRETO DO SERVIDOR · SEM CADASTRO</span>
+              </div>
+            </div>
+
+            <div class="phone reveal">
+              <div class="phone__frame">
+                <span class="phone__notch" aria-hidden="true"></span>
+                <img src="/img/pixfalsonubank/imagem1.jpg.jpeg" alt="Tela inicial do Pix Falso Nubank" width="360" height="760" loading="lazy" decoding="async">
+              </div>
+            </div>
+          </div>
+
+          <div class="note reveal">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M12 3L21 19H3L12 3Z" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M12 9V13" stroke="currentColor" stroke-width="1.5"/>
+              <circle cx="12" cy="16" r="0.9" fill="currentColor"/>
+            </svg>
+            <p class="note__text"><strong>APK fora da Play Store.</strong> O Android vai pedir pra liberar "instalar apps desconhecidos" na primeira vez. É normal — o passo a passo está logo abaixo.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="telas-nubank">
+        <div class="container">
+          <div class="section__header reveal">
+            <span class="section__num">01</span>
+            <h2 class="section__title">TELAS DO APP</h2>
+          </div>
+          <p class="gallery-meta reveal">08 telas · na ordem · toque pra ampliar</p>
+          <div class="gallery">
+            <a class="gallery__item reveal" href="/img/pixfalsonubank/imagem1.jpg.jpeg">
+              <img src="/img/pixfalsonubank/imagem1.jpg.jpeg" alt="Tela 1 do Pix Falso Nubank" width="360" height="680" loading="lazy" decoding="async">
+              <span>01 · INÍCIO</span>
+            </a>
+            <a class="gallery__item reveal" href="/img/pixfalsonubank/imagem2.jpg.jpeg">
+              <img src="/img/pixfalsonubank/imagem2.jpg.jpeg" alt="Tela 2 do Pix Falso Nubank" width="360" height="680" loading="lazy" decoding="async">
+              <span>02 · SALDO</span>
+            </a>
+            <a class="gallery__item reveal" href="/img/pixfalsonubank/imagem3.jpg.jpeg">
+              <img src="/img/pixfalsonubank/imagem3.jpg.jpeg" alt="Tela 3 do Pix Falso Nubank" width="360" height="680" loading="lazy" decoding="async">
+              <span>03 · ÁREA PIX</span>
+            </a>
+            <a class="gallery__item reveal" href="/img/pixfalsonubank/imagem4.jpg.jpeg">
+              <img src="/img/pixfalsonubank/imagem4.jpg.jpeg" alt="Tela 4 do Pix Falso Nubank" width="360" height="680" loading="lazy" decoding="async">
+              <span>04 · VALOR</span>
+            </a>
+            <a class="gallery__item reveal" href="/img/pixfalsonubank/imagem5.jpg.jpeg">
+              <img src="/img/pixfalsonubank/imagem5.jpg.jpeg" alt="Tela 5 do Pix Falso Nubank" width="360" height="680" loading="lazy" decoding="async">
+              <span>05 · DADOS</span>
+            </a>
+            <a class="gallery__item reveal" href="/img/pixfalsonubank/imagem6.jpg.jpeg">
+              <img src="/img/pixfalsonubank/imagem6.jpg.jpeg" alt="Tela 6 do Pix Falso Nubank" width="360" height="680" loading="lazy" decoding="async">
+              <span>06 · COMPROVANTE</span>
+            </a>
+            <a class="gallery__item reveal" href="/img/pixfalsonubank/imagem7.jpg.jpeg">
+              <img src="/img/pixfalsonubank/imagem7.jpg.jpeg" alt="Tela 7 do Pix Falso Nubank" width="360" height="680" loading="lazy" decoding="async">
+              <span>07 · EXPORTAR</span>
+            </a>
+            <a class="gallery__item reveal" href="/img/pixfalsonubank/imagem8.jpg.jpeg">
+              <img src="/img/pixfalsonubank/imagem8.jpg.jpeg" alt="Tela 8 do Pix Falso Nubank" width="360" height="680" loading="lazy" decoding="async">
+              <span>08 · HISTÓRICO</span>
+            </a>
+          </div>
+          <span class="gallery__hint">DESLIZE PRA VER AS 8 TELAS →</span>
+        </div>
+      </section>
+
+      <section class="section" id="recursos-nubank">
+        <div class="container">
+          <div class="section__header reveal">
+            <span class="section__num">02</span>
+            <h2 class="section__title">O QUE VEM NO APP</h2>
+          </div>
+          <div class="feat-list">
+            <div class="feat-list__item reveal">
+              <span class="feat-list__num">01</span>
+              <div class="feat-list__body">
+                <h3 class="feat-list__title">Layout do Nubank</h3>
+                <p class="feat-list__desc">Roxo, fonte, ícones e telas fiéis ao app original. Bate o olho e parece o roxinho.</p>
+              </div>
+            </div>
+            <div class="feat-list__item reveal">
+              <span class="feat-list__num">02</span>
+              <div class="feat-list__body">
+                <h3 class="feat-list__title">Comprovante completo</h3>
+                <p class="feat-list__desc">Valor, nome do recebedor, chave Pix, banco, data e hora — tudo editável antes de gerar.</p>
+              </div>
+            </div>
+            <div class="feat-list__item reveal">
+              <span class="feat-list__num">03</span>
+              <div class="feat-list__body">
+                <h3 class="feat-list__title">Salvar e compartilhar</h3>
+                <p class="feat-list__desc">Gera imagem em alta resolução e manda direto pro WhatsApp, ou salva na galeria pra print.</p>
+              </div>
+            </div>
+            <div class="feat-list__item reveal">
+              <span class="feat-list__num">04</span>
+              <div class="feat-list__body">
+                <h3 class="feat-list__title">Funciona offline</h3>
+                <p class="feat-list__desc">Não precisa de internet pra gerar. Só instalar e usar, em qualquer lugar.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
 
     <section class="section" id="instalar">
       <div class="container">
@@ -1482,8 +1745,8 @@
             </svg>
           </div>
           <div class="soon__body">
-            <h3 class="soon__title">Nubank fake</h3>
-            <p class="soon__desc">Mesmo esquema, com a identidade do roxinho. Em produção.</p>
+            <h3 class="soon__title">Outros bancos</h3>
+            <p class="soon__desc">Novos templates entram na mesma leva. O aviso sai no grupo primeiro.</p>
           </div>
           <span class="soon__tag">EM BREVE</span>
         </div>
@@ -1499,10 +1762,10 @@
         <div class="faq-list">
           <details class="faq-item reveal">
             <summary>
-              O APK é seguro
+              Os APKs são seguros
               <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 2V14M2 8H14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
             </summary>
-            <div class="faq-item__answer">É o arquivo que a tropa usa, hospedado no próprio site. Não pede login, não tem anúncio e não acessa nada além do necessário pra salvar as imagens.</div>
+            <div class="faq-item__answer">São os arquivos que a tropa usa, hospedados no próprio site. Não pedem login, não têm anúncio e não acessam nada além do necessário pra salvar as imagens.</div>
           </details>
           <details class="faq-item reveal">
             <summary>
@@ -1510,6 +1773,13 @@
               <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 2V14M2 8H14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
             </summary>
             <div class="faq-item__answer">Aviso padrão pra qualquer APK fora da Play Store. Vale pra todos os apps assim, não é sinal de problema.</div>
+          </details>
+          <details class="faq-item reveal">
+            <summary>
+              Dá pra ter os dois instalados
+              <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 2V14M2 8H14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </summary>
+            <div class="faq-item__answer">Dá. São apps separados, com pacotes diferentes — um não sobrescreve o outro. Instala os dois e usa conforme o banco da operação.</div>
           </details>
           <details class="faq-item reveal">
             <summary>
@@ -1530,7 +1800,7 @@
               Precisa pagar ou tem versão paga
               <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 2V14M2 8H14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
             </summary>
-            <div class="faq-item__answer">Não. O download é liberado e o app não tem trava. Se um dia mudar, o aviso vai no grupo antes.</div>
+            <div class="faq-item__answer">Não. Os downloads são liberados e os apps não têm trava. Se um dia mudar, o aviso vai no grupo antes.</div>
           </details>
           <details class="faq-item reveal">
             <summary>
@@ -1551,8 +1821,9 @@
           <a href="/downloads/pixfalso-inter.apk"
              download="PixFalsoInter.apk"
              type="application/vnd.android.package-archive"
-             class="cta-final__btn">
-            BAIXAR APK — 16 MB
+             class="cta-final__btn"
+             id="ctaDownload">
+            BAIXAR APK — INTER
             <svg class="btn__arrow" viewBox="0 0 16 16" fill="none" aria-hidden="true">
               <path d="M8 2V11M4 8L8 12L12 8M2 14H14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
@@ -1584,7 +1855,8 @@
       <a href="/downloads/pixfalso-inter.apk"
          download="PixFalsoInter.apk"
          type="application/vnd.android.package-archive"
-         class="btn">
+         class="btn"
+         id="barDownload">
         BAIXAR APK
         <svg class="btn__arrow" viewBox="0 0 16 16" fill="none" aria-hidden="true">
           <path d="M8 2V11M4 8L8 12L12 8M2 14H14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -1596,7 +1868,7 @@
   <dialog class="lightbox" id="lightbox" aria-label="Visualizar tela do app">
     <div class="lightbox__inner">
       <div class="lightbox__bar">
-        <span class="lightbox__count" id="lbCount">1 / 6</span>
+        <span class="lightbox__count" id="lbCount">1 / 1</span>
         <button class="lightbox__close" id="lbClose" aria-label="Fechar">×</button>
       </div>
       <img class="lightbox__img" id="lbImg" alt="">
@@ -1620,9 +1892,61 @@
       const body = document.body;
       const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+      const tabInter = document.getElementById('tabInter');
+      const tabNubank = document.getElementById('tabNubank');
+      const panelInter = document.getElementById('panelInter');
+      const panelNubank = document.getElementById('panelNubank');
+      const ctaDownload = document.getElementById('ctaDownload');
+      const barDownload = document.getElementById('barDownload');
+
+      const APPS = {
+        inter: { file: '/downloads/pixfalso-inter.apk', name: 'PixFalsoInter.apk', label: 'INTER' },
+        nubank: { file: '/downloads/pixfalso-nubank.apk', name: 'PixFalsoNubank.apk', label: 'NUBANK' }
+      };
+
       let menuOpen = false;
       let scrollPosition = 0;
       let prevWidth = window.innerWidth;
+      let currentApp = html.getAttribute('data-app') === 'nubank' ? 'nubank' : 'inter';
+
+      /* ===== ABAS ===== */
+      function setApp(app, moveFocus) {
+        currentApp = app;
+        html.setAttribute('data-app', app);
+
+        const isInter = app === 'inter';
+        tabInter.setAttribute('aria-selected', isInter ? 'true' : 'false');
+        tabNubank.setAttribute('aria-selected', isInter ? 'false' : 'true');
+        tabInter.tabIndex = isInter ? 0 : -1;
+        tabNubank.tabIndex = isInter ? -1 : 0;
+
+        panelInter.hidden = !isInter;
+        panelNubank.hidden = isInter;
+
+        const cfg = APPS[app];
+        [ctaDownload, barDownload].forEach(function (el) {
+          el.setAttribute('href', cfg.file);
+          el.setAttribute('download', cfg.name);
+        });
+        ctaDownload.firstChild.textContent = 'BAIXAR APK — ' + cfg.label + ' ';
+
+        if (moveFocus) (isInter ? tabInter : tabNubank).focus();
+        try { sessionStorage.setItem('activeApp', app); } catch (e) {}
+      }
+
+      tabInter.addEventListener('click', function () { if (currentApp !== 'inter') setApp('inter'); });
+      tabNubank.addEventListener('click', function () { if (currentApp !== 'nubank') setApp('nubank'); });
+
+      [tabInter, tabNubank].forEach(function (tab) {
+        tab.addEventListener('keydown', function (e) {
+          if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+            e.preventDefault();
+            setApp(currentApp === 'inter' ? 'nubank' : 'inter', true);
+          }
+        });
+      });
+
+      setApp(currentApp);
 
       /* ===== VÉU: revela a página na entrada ===== */
       if (html.classList.contains('veil-incoming')) {
@@ -1637,7 +1961,6 @@
       function goBack() {
         if (leaving) return;
         leaving = true;
-
         try { sessionStorage.setItem('openMenu', '1'); } catch (e) {}
 
         if (prefersReduced) {
@@ -1646,9 +1969,7 @@
         }
 
         veil.classList.add('is-in');
-        setTimeout(function () {
-          window.location.href = '/index.html';
-        }, 470);
+        setTimeout(function () { window.location.href = '/index.html'; }, 470);
       }
 
       document.querySelectorAll('[data-back]').forEach(function (el) {
@@ -1658,7 +1979,6 @@
         });
       });
 
-      /* Se voltar pelo botão do navegador, também marca o menu */
       window.addEventListener('pageshow', function (e) {
         if (e.persisted) {
           html.classList.remove('veil-incoming');
@@ -1807,14 +2127,21 @@
         revealElements.forEach(function (el) { el.classList.add('is-visible'); });
       }
 
-      /* ===== LIGHTBOX ===== */
+      /* ===== LIGHTBOX (só do painel visível) ===== */
       const lightbox = document.getElementById('lightbox');
       const lbImg = document.getElementById('lbImg');
       const lbCount = document.getElementById('lbCount');
-      const items = Array.prototype.slice.call(document.querySelectorAll('.gallery__item'));
+      const lbClose = document.getElementById('lbClose');
+      let items = [];
       let current = 0;
 
+      function collectItems() {
+        const panel = document.querySelector('.panel:not([hidden])');
+        items = panel ? Array.prototype.slice.call(panel.querySelectorAll('.gallery__item')) : [];
+      }
+
       function renderSlide(i) {
+        if (!items.length) return;
         current = (i + items.length) % items.length;
         const img = items[current].querySelector('img');
         lbImg.src = items[current].getAttribute('href');
@@ -1823,10 +2150,11 @@
       }
 
       function openLightbox(i) {
+        collectItems();
         renderSlide(i);
         if (typeof lightbox.showModal === 'function') lightbox.showModal();
         else lightbox.setAttribute('open', '');
-        document.getElementById('lbClose').focus();
+        lbClose.focus();
       }
 
       function closeLightbox() {
@@ -1834,14 +2162,15 @@
         else lightbox.removeAttribute('open');
       }
 
-      items.forEach(function (item, i) {
+      document.querySelectorAll('.gallery__item').forEach(function (item) {
         item.addEventListener('click', function (e) {
           e.preventDefault();
-          openLightbox(i);
+          collectItems();
+          openLightbox(items.indexOf(item));
         });
       });
 
-      document.getElementById('lbClose').addEventListener('click', closeLightbox);
+      lbClose.addEventListener('click', closeLightbox);
       document.getElementById('lbPrev').addEventListener('click', function () { renderSlide(current - 1); });
       document.getElementById('lbNext').addEventListener('click', function () { renderSlide(current + 1); });
 
@@ -1855,7 +2184,6 @@
         if (e.key === 'ArrowRight') renderSlide(current + 1);
       });
 
-      /* Swipe no lightbox */
       let touchX = 0;
       lightbox.addEventListener('touchstart', function (e) {
         touchX = e.changedTouches[0].clientX;
