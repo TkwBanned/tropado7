@@ -1,0 +1,7 @@
+# tropado7.com
+User-agent: *
+Allow: /
+Disallow: /*?utm_
+Disallow: /*?fbclid=
+
+Sitemap: https://tropado7.com/sitemap.xml
