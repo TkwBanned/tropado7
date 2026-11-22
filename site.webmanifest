@@ -1,0 +1,26 @@
+{
+  "name": "Tropa do 7 — Equipe 5:30",
+  "short_name": "Tropa do 7",
+  "description": "Grupo de WhatsApp gratuito da Tropa do 7. Conversa sobre cartão e checkout.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0A0A0A",
+  "theme_color": "#0A0A0A",
+  "lang": "pt-BR",
+  "dir": "ltr",
+  "icons": [
+    {
+      "src": "https://i.imgur.com/Lp1Ks7c.jpeg",
+      "sizes": "192x192",
+      "type": "image/jpeg",
+      "purpose": "any"
+    },
+    {
+      "src": "https://i.imgur.com/Lp1Ks7c.jpeg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any"
+    }
+  ]
+}
