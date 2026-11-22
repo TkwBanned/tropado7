@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guia do Zero: Cartão, Ref e Checkout pra Quem Tá Começando | Tropa do 7</title>
+<meta name="description" content="O que é ref, ref quente, BIN e taxa de aprovação. Guia direto pra quem nunca mexeu com cartão e checkout, escrito sem enrolação pela Tropa do 7.">
+<meta name="keywords" content="o que é ref, ref quente, o que é bin, taxa de aprovação, cartão clonado como funciona, como começar com cartão, checkout, guia cartão">
+<meta name="robots" content="index, follow, max-snippet:-1">
+<meta name="theme-color" content="#0A0A0A">
+<link rel="canonical" href="https://tropado7.com/guia">
+<link rel="icon" href="https://i.imgur.com/Lp1Ks7c.jpeg">
+<meta property="og:site_name" content="Tropa do 7">
+<meta property="og:title" content="Guia do Zero: Cartão, Ref e Checkout">
+<meta property="og:description" content="Ref, BIN, aprovação e checkout explicados do começo, sem enrolação.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://tropado7.com/guia">
+<meta property="og:image" content="https://i.imgur.com/Lp1Ks7c.jpeg">
+<meta property="og:locale" content="pt_BR">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter+Tight:wght@400;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Guia do zero: cartão, ref e checkout pra quem tá começando",
+  "url": "https://tropado7.com/guia",
+  "inLanguage": "pt-BR",
+  "datePublished": "2026-11-22",
+  "dateModified": "2026-11-22",
+  "author": { "@type": "Person", "name": "Sariel OzN" },
+  "publisher": { "@type": "Organization", "name": "Tropa do 7", "url": "https://tropado7.com/" },
+  "isPartOf": { "@id": "https://tropado7.com/#website" },
+  "breadcrumb": {
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Início", "item": "https://tropado7.com/" },
+      { "@type": "ListItem", "position": 2, "name": "Guia do zero", "item": "https://tropado7.com/guia" }
+    ]
+  }
+}
+</script>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0A0A0A;--surface:#141414;--hairline:#262626;--text:#F2F2F2;--text-sec:#8C8C8C;--red:#E10600;--red-cta:#FF3B30;--red-text:#FF3B30;--mono:'JetBrains Mono',monospace;--display:'Anton',sans-serif;--body:'Inter Tight',sans-serif;--radius:4px}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--text);font-family:var(--body);line-height:1.6;min-height:100vh}
+a{color:inherit;text-decoration:none}
+:focus-visible{outline:2px solid var(--red-text);outline-offset:3px}
+.topbar{position:sticky;top:0;z-index:10;background:var(--bg);border-bottom:1px solid var(--hairline);height:60px;display:flex;align-items:center;padding:0 20px;gap:16px}
+.topbar__logo{font-family:var(--display);font-size:20px;text-transform:uppercase;letter-spacing:-.03em;line-height:1}
+.topbar__logo .red{color:var(--red)}
+.topbar__back{margin-left:auto;font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-sec);border:1px solid var(--hairline);border-radius:var(--radius);padding:8px 12px}
+.topbar__back:hover{color:var(--text);border-color:var(--red)}
+.container{max-width:760px;margin:0 auto;padding:40px 20px 64px}
+.crumb{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-sec);margin-bottom:20px}
+.crumb a:hover{color:var(--text)}
+.crumb .sep{color:var(--hairline);margin:0 6px}
+h1{font-family:var(--display);font-size:clamp(28px,7.5vw,48px);text-transform:uppercase;letter-spacing:-.03em;line-height:.95;margin-bottom:14px}
+.updated{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-sec);border-left:2px solid var(--red);padding-left:12px;margin-bottom:28px;line-height:1.9}
+.lead{font-size:16px;color:var(--text-sec);margin-bottom:24px}
+.toc{background:var(--surface);border:1px solid var(--hairline);border-radius:var(--radius);padding:18px;margin-bottom:32px}
+.toc__t{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--red-text);margin-bottom:10px;display:block}
+.toc a{display:block;font-size:14px;color:var(--text-sec);padding:6px 0;border-bottom:1px solid var(--hairline)}
+.toc a:last-child{border-bottom:none}
+.toc a:hover{color:var(--text)}
+h2{font-family:var(--display);font-size:22px;text-transform:uppercase;letter-spacing:-.02em;line-height:1.1;margin:40px 0 14px;padding-bottom:8px;border-bottom:1px solid var(--hairline)}
+h2 .n{font-family:var(--mono);font-size:11px;color:var(--red-text);margin-right:10px;vertical-align:2px}
+h3{font-family:var(--display);font-size:16px;text-transform:uppercase;letter-spacing:-.02em;margin:24px 0 8px;color:var(--text)}
+p{font-size:15px;color:var(--text-sec);margin-bottom:14px}
+strong{color:var(--text);font-weight:600}
+ul{margin:0 0 14px 0;list-style:none}
+li{font-size:15px;color:var(--text-sec);margin-bottom:10px;padding-left:18px;position:relative}
+li::before{content:'';position:absolute;left:0;top:9px;width:5px;height:5px;background:var(--red);transform:rotate(45deg)}
+.box{background:var(--surface);border:1px solid var(--hairline);border-left:2px solid var(--red);border-radius:var(--radius);padding:18px;margin:20px 0}
+.box p:last-child{margin-bottom:0}
+a.link{color:var(--red-text);text-decoration:underline;text-underline-offset:3px}
+.cta{display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:52px;padding:0 24px;background:var(--red-cta);color:#0A0A0A;font-family:var(--mono);font-weight:500;font-size:12px;letter-spacing:.12em;text-transform:uppercase;border:none;border-radius:10px;margin:6px 0 10px}
+.cta:active{transform:scale(.98)}
+.micro{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-sec);text-align:center;display:block;margin-bottom:24px}
+.footer{border-top:1px solid var(--hairline);padding:28px 20px 40px;max-width:760px;margin:0 auto}
+.footer__nav{display:flex;flex-wrap:wrap;gap:8px 20px;margin-bottom:18px}
+.footer__nav a{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-sec)}
+.footer__nav a:hover{color:var(--text)}
+.footer__note{font-size:12px;color:var(--text-sec);line-height:1.7}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <a href="/" class="topbar__logo">TROPA DO <span class="red">7</span></a>
+  <a href="/" class="topbar__back">Voltar ao site</a>
+</header>
+
+<main class="container">
+  <nav class="crumb" aria-label="Você está aqui"><a href="/">Início</a><span class="sep">/</span>Guia do zero</nav>
+
+  <h1>Guia do zero: cartão, ref e checkout</h1>
+  <p class="updated">Publicado em 22 de novembro de 2026 · Por Sariel OzN</p>
+
+  <p class="lead">Se você caiu aqui sem saber o que é ref, BIN ou checkout, respira: esse texto foi escrito justamente pra você. É o que a gente explica no grupo, só que em ordem e sem pressa.</p>
+
+  <div class="toc">
+    <span class="toc__t">Nesse guia</span>
+    <a href="#cartao-clonado">1. O que é cartão clonado</a>
+    <a href="#o-que-e-ref">2. O que é ref e ref quente</a>
+    <a href="#aprovacao">3. O que é taxa de aprovação</a>
+    <a href="#bin">4. O que é BIN e por que ele decide tudo</a>
+    <a href="#checkout">5. Por que a página de checkout importa</a>
+    <a href="#como-comecar">6. Como começar do zero</a>
+    <a href="#erros">7. Erros que travam quem tá começando</a>
+    <a href="#entrar">8. Onde tirar dúvida de graça</a>
+  </div>
+
+  <h2 id="cartao-clonado"><span class="n">01</span>O que é cartão clonado</h2>
+  <p>De forma bem direta: <strong>cartão clonado</strong> é o nome popular para usar os dados de um cartão que não é seu. Número, validade e código. No grupo, ninguém fica falando "cartão clonado" o tempo todo — o pessoal chama só de <strong>cartão</strong>, e você vai se acostumar rápido.</p>
+  <p>O que se faz com isso? Passar numa página de pagamento. Se passar, a compra é concluída. Se não passar, aparece um motivo — e é a leitura desse motivo que separa quem só tenta de quem entende.</p>
+  <p>Não precisa decorar nada disso agora. O importante é entender que existe uma ordem: <strong>cartão → página → leitura do resultado</strong>. Pular etapa é o que faz a maioria desistir na primeira semana.</p>
+
+  <h2 id="o-que-e-ref"><span class="n">02</span>O que é ref e ref quente</h2>
+  <p><strong>Ref</strong> é referência. É um cartão que outra pessoa já testou e que, naquele momento, estava passando. Serve para você não sair chutando BIN no escuro: alguém já foi na frente e mostrou o caminho.</p>
+  <p><strong>Ref quente</strong> é a ref que acabou de ser testada e ainda está respondendo. Ref quente é o que todo mundo quer, e é por isso que ela tem prazo de validade curto.</p>
+  <div class="box">
+    <p><strong>Regra prática:</strong> ref velha é ref morta. Se a ref tem dois dias, a chance já caiu bastante. Se tem uma semana, você está basicamente testando de novo.</p>
+  </div>
+  <p>Por isso o grupo atualiza ref <strong>todo dia</strong>. Não é enfeite: ref parada é ref inútil. Quem entra e fica de olho pega a ref na hora em que ela ainda vale.</p>
+
+  <h2 id="aprovacao"><span class="n">03</span>O que é taxa de aprovação</h2>
+  <p>Taxa de aprovação é, literalmente, quantas de cada cem tentativas passam. Se você tenta dez e passa três, sua taxa é 30%.</p>
+  <p>Quem está começando olha só para o "passou ou não passou". Quem já anda nisso olha para a taxa: ela diz se o problema é o cartão, a página ou o jeito de tentar. Três coisas sobem a taxa:</p>
+  <ul>
+    <li><strong>BIN certo.</strong> Tentar no BIN errado é queimar tentativa de graça.</li>
+    <li><strong>Página limpa.</strong> Checkout pesado, com campo demais e cara de site aleatório, derruba aprovação.</li>
+    <li><strong>Repetição com ajuste.</strong> Tentar igualzinho dez vezes não ensina nada. Tentar mudando uma variável por vez, sim.</li>
+  </ul>
+  <p>Ninguém tem 100%. Quem promete 100% está vendendo sonho.</p>
+
+  <h2 id="bin"><span class="n">04</span>O que é BIN e por que ele decide tudo</h2>
+  <p><strong>BIN</strong> são os seis primeiros números do cartão. Eles identificam a bandeira e o banco que emitiu. É o primeiro filtro de qualquer conferência — e é por isso que o BIN é a informação mais valiosa de uma ref.</p>
+  <p>BIN bom não garante nada, mas BIN ruim quase sempre entrega resultado ruim. Na prática: se a ref que você pegou é de um BIN que já está queimado, você vai perder tempo mesmo com o cartão certo na mão.</p>
+
+  <h2 id="checkout"><span class="n">05</span>Por que a página de checkout importa</h2>
+  <p>O <strong>checkout</strong> é a página onde o cartão é digitado. Muita gente acha que o checkout é detalhe e foca só no cartão — e depois não entende por que a taxa é baixa.</p>
+  <p>A página conta uma história: se ela parece confiável, o processamento tende a reagir melhor. Checkout com campo demais, layout quebrado no celular, botão que não responde ou demora de carregamento atrapalham.</p>
+  <p>No material do grupo a página já vem pronta: ela recebe os dados, confere e manda tudo para o seu Telegram. Não passa por adquirente, então não existe captura de verdade no meio — é confirmação de recebimento, não liquidação bancária. Saber disso evita expectativa errada.</p>
+
+  <h2 id="como-comecar"><span class="n">06</span>Como começar do zero</h2>
+  <p>Sem mistério e sem ordem mágica. É assim:</p>
+  <ul>
+    <li><strong>Entenda o básico.</strong> Cartão, BIN, checkout e leitura de resultado. Você acabou de ler.</li>
+    <li><strong>Pegue o material.</strong> Lista, página de checkout e o resto. Tudo no grupo, liberado por etapa.</li>
+    <li><strong>Suba a página.</strong> Coloque no ar e teste se ela abre rápido no celular.</li>
+    <li><strong>Comece com pouco.</strong> Poucas tentativas, olhando o que voltou. Não saia metendo volume no primeiro dia.</li>
+    <li><strong>Leia o retorno.</strong> Cada recusa tem motivo. Anotar o motivo é o que faz você melhorar.</li>
+    <li><strong>Repita com ajuste.</strong> Uma variável por vez: BIN, página, horário.</li>
+  </ul>
+  <p>Celular resolve. Computador ajuda em algumas etapas, mas não é pré-requisito.</p>
+
+  <h2 id="erros"><span class="n">07</span>Erros que travam quem tá começando</h2>
+  <ul>
+    <li><strong>Pular etapa.</strong> Tentar volume antes de saber ler o resultado.</li>
+    <li><strong>Usar ref velha.</strong> Achar que ref de cinco dias ainda está quente.</li>
+    <li><strong>Não anotar nada.</strong> Sem anotação, todo teste vira sorte.</li>
+    <li><strong>Mudar tudo de uma vez.</strong> Aí não dá pra saber o que funcionou.</li>
+    <li><strong>Perguntar sem ler o fixado.</strong> A resposta geralmente já está lá.</li>
+    <li><strong>Desistir no primeiro dia ruim.</strong> Dia ruim é regra, não exceção.</li>
+  </ul>
+
+  <h2 id="entrar"><span class="n">08</span>Onde tirar dúvida de graça</h2>
+  <p>No grupo da Tropa do 7. É gratuito, a entrada é na hora e o assunto é exatamente esse. Tem gente começando igual a você e gente que já anda nisso há mais tempo — dá pra perguntar sem medo de parecer leigo.</p>
+  <p>Se quiser primeiro ver as regras e como funciona, tem a página do <a class="link" href="/grupo">grupo do 7 no WhatsApp</a>. Se quiser só a entrada, o botão está aqui embaixo.</p>
+
+  <a class="cta" href="https://chat.whatsapp.com/ECoOrfynjUlDBYvJSjYFh0" target="_blank" rel="noopener">ENTRAR NO GRUPO →</a>
+  <span class="micro">Grátis · Sem cadastro · Bora faturar em 2027</span>
+</main>
+
+<footer class="footer">
+  <nav class="footer__nav" aria-label="Institucional">
+    <a href="/">Início</a>
+    <a href="/grupo">Grupo no WhatsApp</a>
+    <a href="/privacidade">Privacidade</a>
+    <a href="/termos">Termos</a>
+    <a href="/aviso">Aviso</a>
+    <a href="mailto:contato@tropado7.com">contato@tropado7.com</a>
+  </nav>
+  <p class="footer__note">Site independente, sem vínculo com WhatsApp, Meta, bancos ou bandeiras de cartão. Conteúdo informativo, sem garantia de resultado. © 2026 Tropa do 7 — Equipe 5:30.</p>
+</footer>
+
+</body>
+</html>
